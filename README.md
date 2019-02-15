@@ -26,7 +26,14 @@ select * from request_ips;
 
 
 ```
-
+#### Enviromental variables 
+```bash
+PSQL_DB_USER        default='micro'
+PSQL_DB_PASS        default='password'
+PSQL_DB_NAME        default='microservice'
+PSQL_DB_ADDRESS     default='127.0.0.1'
+PSQL_DB_PORT        default='5432'
+```
 
 #### Run microservice app
 ```bash
