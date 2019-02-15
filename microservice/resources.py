@@ -3,7 +3,7 @@
 import pytz
 import socket
 import datetime
-from models import IpAddress
+from microservice.models import IpAddress
 from flask_restful import Resource
 
 class IpAddressSave(Resource):
@@ -19,3 +19,9 @@ class IpAddressSave(Resource):
         return {"message": "IP address was saved to database."}, 200
 
 
+class IsAlive(Resource):
+    """
+
+    """
+    def get(self):
+        return {"message": "Is alive!"}, 200

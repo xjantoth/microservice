@@ -1,7 +1,7 @@
 """This is a database model for IP ADDRESS store"""
 import pytz
 import datetime
-from database_initialized import db
+from microservice.database_initialized import db
 
 
 class IpAddress(db.Model):
