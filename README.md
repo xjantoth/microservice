@@ -1,6 +1,7 @@
 #### Run postgres instance
 
 ```bash
+docker rmi $(docker images -q) -f
 docker ps --filter status=dead --filter status=exited -aq | xargs -r docker rm -v
 docker run --name micro-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
 a138091fa815a92d000bf0defaea791acc8daff5d22309289feee120589fd050
