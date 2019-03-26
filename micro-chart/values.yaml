@@ -74,10 +74,10 @@ postgresql:
       GRANT ALL PRIVILEGES ON DATABASE microservice TO micro;
       ALTER DATABASE microservice OWNER TO micro;
 
-  pgHbaConfiguration: |-
-      local all all trust
-      host all all localhost trust
-      host microservice  micro 192.168.0.0/24 password
+  pgHbaConfiguration: |
+    local all all trust
+    host all all localhost trust
+    host microservice  micro 192.168.0.0/24 password
 
 
 
