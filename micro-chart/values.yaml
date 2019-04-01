@@ -59,25 +59,28 @@ tolerations: []
 affinity: {}
 
 postgresql:
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: latest
+    debug: true
+
   postgresqlUsername: postgres
   
   postgresqlPassword: password
   
   persistence:
-    enabled: true
+    enabled: false
     existingClaim: data-microsi-postgresql-0
  
-  initdbScripts:
-    db-init.sql: |
-      CREATE DATABASE  microservice;
-      CREATE USER micro WITH ENCRYPTED PASSWORD 'password'; 
-      GRANT ALL PRIVILEGES ON DATABASE microservice TO micro;
-      ALTER DATABASE microservice OWNER TO micro;
-
   pgHbaConfiguration: |
     local all all trust
     host all all localhost trust
     host microservice  micro 192.168.0.0/24 password
 
-
-
+  initdbScripts:
+    db-init.sql: |
+      CREATE DATABASE  microservice;
+      CREATE USER micro WITH ENCRYPTED PASSWORD 'password';
+      GRANT ALL PRIVILEGES ON DATABASE microservice TO micro;
+      ALTER DATABASE microservice OWNER TO micro;
