@@ -3,8 +3,8 @@
 import pytz
 import socket
 import datetime
-from microservice.models import IpAddress
 from flask_restful import Resource
+from microservice.models import IpAddress
 
 class IpAddressSave(Resource):
     """
@@ -12,16 +12,18 @@ class IpAddressSave(Resource):
     container and save it into the database.
     """
     def get(self):
-        create_date = datetime.datetime.now(pytz.timezone("Europe/Bratislava"))
+        create_date = datetime.datetime.now(pytz.timezone("America/New_York"))
         ip = socket.gethostbyname(socket.gethostname())
-        ipi = IpAddress(ipaddr=ip, created=create_date)
+        ipi = IpAddress(ip_addr=ip, created=create_date)
         ipi.save_to_db()
         return {"message": "IP address was saved to database."}, 200
 
 
 class IsAlive(Resource):
     """
-
+    Pseudo micro-service health check which simply returns status code 200 when called.
+    It does not perform any action since this is a quite simple micro-service with minimal
+    functionality.
     """
     def get(self):
         return {"message": "Is alive!"}, 200

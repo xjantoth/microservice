@@ -8,20 +8,25 @@ class IpAddress(db.Model):
     __tablename__ = 'request_ips'
 
     id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime, default=datetime.datetime.now(pytz.timezone("Europe/Bratislava")))
-    # ipaddr = db.Column(db.IPAddressType)
-    ipaddr = db.Column(db.String)
+    created = db.Column(
+        db.DateTime,
+        default=datetime.datetime.now(
+            pytz.timezone("America/New_York")
+        )
+    )
+    ip_addr = db.Column(db.String)
 
-    def __init__(self, ipaddr, created):
+    def __init__(self, ip_addr, created):
         """
 
-        :param ipaddr:
+        :param ip_addr:
+        :param created:
         """
-        self.ipaddr = ipaddr
+        self.ip_addr = ip_addr
         self.created = created
 
     def json(self):
-        return self.ipaddr
+        return self.ip_addr
 
     def delete_from_db(self):
         db.session.delete(self)
@@ -35,7 +40,7 @@ class IpAddress(db.Model):
     def find_address_id(cls, ip):
         """
 
-        :param _id:
+        :param ip:
         :return:
         """
         return cls.query.filter_by(ipaddr=ip).first()

@@ -9,8 +9,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:%(pw)s@%(host)s:%
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True # To allow flask
 
-api = Api(app)
-
 @app.before_first_request
 def create_tables():
     """
@@ -24,6 +22,7 @@ def create_tables():
         db.init_app(app)
         db.create_all()
 
+api = Api(app)
 api.add_resource(IpAddressSave, '/api/saveip')
 api.add_resource(IsAlive, '/api/isalive')
 
