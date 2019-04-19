@@ -1,9 +1,16 @@
 from flask import Flask
 from flask_restful import Api
-from microservice.resources import IpAddressSave, IsAlive
+from flask_cors import CORS
+from microservice.resources import (
+    IpAddressSave,
+    IsAlive,
+    GetAllIpAddresses
+)
 from microservice.config import POSTGRES
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -25,6 +32,7 @@ def create_tables():
 api = Api(app)
 api.add_resource(IpAddressSave, '/api/saveip')
 api.add_resource(IsAlive, '/api/isalive')
+api.add_resource(GetAllIpAddresses, '/api/getallips')
 
 if __name__ == '__main__':
     app.run()

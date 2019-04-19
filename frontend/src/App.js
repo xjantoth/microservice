@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import Todos from './components/Todos';
+// import Todos from './components/Todos';
 import About from './components/pages/About';
-import AddTodo from './components/AddTodo';
+// import AddTodo from './components/AddTodo';
 import Header from './components/layout/Header';
+import Isalive from './components/Isalive';
+import IpAddresses from './components/IpAddresses';
+import AddAddress from './components/AddAddress';
+
 // import uuid from 'uuid';
 import './App.css';
 import axios from 'axios';
@@ -16,29 +20,39 @@ class App extends Component {
       //       id: uuid.v4(),
       //       title: 'Take out the trash',
       //       completed: false
-      //   },
-      //   {
-      //     id: uuid.v4(),
-      //     title: 'Dinner with wife',
-      //     completed: false
-      // },
+      //   }
+    ],
+
+    isalive: "",
       // {
-      //     id: uuid.v4(),
-      //     title: 'Meeting with boss',
-      //     completed: false
-      // },
-      // {
-      //     id: uuid.v4(),
-      //     title: 'Meeting with me',
-      //     completed: false
+      //   message: 'Is alive!'
       // }
+    
+    addresses: [
+
     ]
+
 }
 
 componentDidMount() {
-  axios.get('https://jsonplaceholder.typicode.com/todos?_limit=17').then(
-    res => this.setState({todos: res.data})
-  )
+  // axios.get('https://jsonplaceholder.typicode.com/todos?_limit=2').then(
+  //   res => this.setState({todos: res.data})
+  // )
+
+  
+  axios.get('http://127.0.0.1:5000/api/getallips').then(
+    res => this.setState({addresses: res.data})
+  ).catch(error => {
+      console.log('GET all ipaddresses:' + error)
+    })
+
+
+  axios.get('http://localhost:5000/api/isalive').then(
+    res => this.setState({isalive: res.data})
+  ).catch(error => {
+      console.log('Error:' + error)
+    })
+
 }
 
 // Toggle Complete
@@ -97,6 +111,8 @@ addTodo = (title) => {
   );
 }
 
+
+
  
   render() {
     return (
@@ -106,22 +122,33 @@ addTodo = (title) => {
         <div className="App">
           <div className="container">
           <Header />
-          
+          <Isalive 
+                active={this.state.isalive}
+                
+            />
           <Route
             exact 
             path="/"
             render={props => (
-                <React.Fragment>
-                  <Todos 
+            <React.Fragment>
+            {/* <Todos 
             todos={this.state.todos} 
             markComplete={this.markComplete} 
             delTodo={this.delTodo}
-          />
+            /> */}
 
-          <AddTodo addTodo={this.addTodo} />
-                </React.Fragment>
+            <IpAddresses 
+            allAddress={this.state.addresses}
+            />
+
+            {/* <AddTodo addTodo={this.addTodo} /> */}
+            <AddAddress />
+            
+            
+            </React.Fragment>
             )}
           />
+
           
           <Route 
             path="/about"

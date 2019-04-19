@@ -3,6 +3,7 @@
 import pytz
 import socket
 import datetime
+from flask import jsonify
 from flask_restful import Resource
 from microservice.models import IpAddress
 
@@ -26,4 +27,19 @@ class IsAlive(Resource):
     functionality.
     """
     def get(self):
-        return {"message": "Is alive!"}, 200
+        return {"message": True}, 200
+
+
+class GetAllIpAddresses(Resource):
+    """
+    Returns all records from the database.
+    """
+    def get(self):
+        print("breakpoint.")
+        _addresses = IpAddress.get_all_ip_address()
+        if _addresses:
+            data = [{"id": _addr.id, "created": str(_addr.created), "ipaddress": _addr.ip_addr} for _addr in _addresses]
+            return data, 200
+        return {"message": "No data could be retrived from database."}, 404
+
+

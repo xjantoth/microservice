@@ -44,3 +44,17 @@ class IpAddress(db.Model):
         :return:
         """
         return cls.query.filter_by(ipaddr=ip).first()
+
+    @classmethod
+    def get_all_ip_address(cls):
+        """
+
+        :return:
+        """
+        try:
+            addresses = cls.query.all()
+            return addresses
+        except Exception as e:
+            print("Could not return data: {}".format(e))
+            return None
+
