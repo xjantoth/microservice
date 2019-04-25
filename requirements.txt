@@ -1,5 +1,7 @@
 Flask
+flask-restful
+flask-cors
 Flask-SQLAlchemy
 gunicorn
 Jinja2
-psycopg2
+psycopg2-binary
