@@ -43,3 +43,10 @@ docker build -t microservice:v0.0.1 .
 docker run --rm --name micro-service -it -e PSQL_DB_ADDRESS=192.168.1.45 -p 5001:8000 -d microservice:v0.0.1
 
 ```
+
+
+
+#### Articles to read
+https://kubernetes.io/docs/tasks/access-application-cluster/connecting-frontend-backend/
+https://mherman.org/blog/dockerizing-a-react-app/
+https://medium.com/greedygame-engineering/so-you-want-to-dockerize-your-react-app-64fbbb74c217

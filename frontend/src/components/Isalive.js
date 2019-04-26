@@ -11,19 +11,8 @@ export class Isalive extends Component {
             padding: '4px'
         };
     }
-    
-    
-
   
-    render() {
-    
-    // const activeStyle = {
-    //     background: '#333',
-    //     color: '#fff',
-    //     textAlign: 'right',
-    //     padding: '4px'
-    
-    // }
+    render() {  
     return (
         
         <p style={this.isAlive()}>
@@ -36,6 +25,8 @@ export class Isalive extends Component {
 }
 
 export default Isalive
+
+
 
 
 
