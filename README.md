@@ -1,3 +1,16 @@
+#### Run docker-compose to start frontend/backend/database
+
+This command will start up all three components:
+ 
+ * frontend
+ * backend
+ * postgres database
+
+
+```
+docker-compose up
+```
+
 #### Run postgres instance
 
 ```bash

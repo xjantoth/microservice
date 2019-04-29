@@ -31,10 +31,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      PSQL_DB_ADDRESS: 10.80.10.84
+      PSQL_DB_ADDRESS: 0.0.0.0
     
-        
-
   # PostgreSQL database
   database:
     image: postgres:alpine
@@ -50,7 +48,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      PSQL_DB_ADDRESS: 10.80.10.84
+      
     
 
 
