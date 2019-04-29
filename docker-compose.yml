@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  # The front-end app in React
+  frontend:
+    image: "frontend:v0.0.1"
+    depends_on:
+      - backend
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+     - "3000:80"
+    container_name: ft-react
+    # docker run -it --rm --name  ft-react -p 3000:80 -d frontend:v0.0.1
+
+  # Python Flask backend app
+  backend:
+    image: "microservice:v0.0.1"
+    depends_on:
+      - database
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile    
+    ports:
+      - "5000:8000"
+    container_name: micro-service
+    
+    # Pass postgres environment variables
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      PSQL_DB_ADDRESS: 10.80.10.84
+    
+        
+
+  # PostgreSQL database
+  database:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    container_name: micro-postgres
+    # Mount an initialization script and the persistent postgresql data volume
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/data:/var/lib/postgresql/data
+    # Pass postgres environment variables
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      PSQL_DB_ADDRESS: 10.80.10.84
+    
+
+
+    
+

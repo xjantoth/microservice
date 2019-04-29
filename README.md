@@ -50,3 +50,21 @@ docker run --rm --name micro-service -it -e PSQL_DB_ADDRESS=192.168.1.45 -p 5001
 https://kubernetes.io/docs/tasks/access-application-cluster/connecting-frontend-backend/
 https://mherman.org/blog/dockerizing-a-react-app/
 https://medium.com/greedygame-engineering/so-you-want-to-dockerize-your-react-app-64fbbb74c217
+
+#### helm chart backend/frontend
+
+```
+helm create micro-service
+cd micro-service
+
+cat <<EOF > requirements.yaml
+dependencies:
+- name: postgresql
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 3.18.3
+
+EOF
+
+helm dependency update
+
+```

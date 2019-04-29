@@ -1,0 +1,4 @@
+CREATE DATABASE  microservice;
+CREATE USER micro WITH ENCRYPTED PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE microservice TO micro;
+ALTER DATABASE microservice OWNER TO micro;
