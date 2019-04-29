@@ -31,7 +31,10 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      PSQL_DB_ADDRESS: 0.0.0.0
+      # value for variable: | PSQL_DB_ADDRESS: database |
+      # can be accessed as a real IP ADDRESS for PostgreSQL
+      # database thanks to docker-compose networking
+      PSQL_DB_ADDRESS: database
     
   # PostgreSQL database
   database:
