@@ -11,8 +11,8 @@ livenessProbe:
   path: /
 
 image:
-  repository: frontend
-  tag: v0.0.1
+  repository: jantoth/frontend 
+  tag: v0.0.2
   pullPolicy: IfNotPresent
   # This will be Nginx serving 
   # react app static content *.html, *.js, *.css

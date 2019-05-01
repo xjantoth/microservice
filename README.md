@@ -11,6 +11,16 @@ This command will start up all three components:
 docker-compose up
 ```
 
+#### Helm Charts
+
+##### Backend (Flasl App)
+```
+helm install --name microsi helm-charts/micro-chart  --tls
+kubectl edit svc microsi-micro-chart
+curl http://<ip_address>:31637/api/saveip
+```
+
+
 #### Run postgres instance
 
 ```bash
@@ -63,6 +73,7 @@ docker run --rm --name micro-service -it -e PSQL_DB_ADDRESS=192.168.1.45 -p 5001
 https://kubernetes.io/docs/tasks/access-application-cluster/connecting-frontend-backend/
 https://mherman.org/blog/dockerizing-a-react-app/
 https://medium.com/greedygame-engineering/so-you-want-to-dockerize-your-react-app-64fbbb74c217
+ENV VAR for REACT APP: https://www.jeffgeerling.com/blog/2018/deploying-react-single-page-web-app-kubernetes
 
 #### helm chart backend/frontend
 
