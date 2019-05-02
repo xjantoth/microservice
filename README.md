@@ -20,6 +20,13 @@ kubectl edit svc microsi-micro-chart
 curl http://<ip_address>:31637/api/saveip
 ```
 
+##### Frontend (React)
+
+Running within a simple Nginx docker container.
+```
+helm install --name frontend helm-charts/micro-front --tls
+```
+
 
 #### Run postgres instance
 

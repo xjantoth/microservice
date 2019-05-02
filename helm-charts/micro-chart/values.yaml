@@ -14,7 +14,7 @@ env:
   "PSQL_DB_ADDRESS": "microsi-postgresql"
 
 image:
-  repository: microservice         
+  repository: jantoth/microservice         
   tag: v0.0.1
   pullPolicy: IfNotPresent
   containerPort: 8000
@@ -28,13 +28,15 @@ service:
   targetPort: 8000
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  paths: []
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    
+  paths: /api/.*
   hosts:
-    - chart-example.local
+    - backend.ingress
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
