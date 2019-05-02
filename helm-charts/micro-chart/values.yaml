@@ -36,7 +36,7 @@ ingress:
     
   paths: ["/api/.*"]
   hosts:
-    - backend.ingress
+    - k8s.linuxinuse.com
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

@@ -13,6 +13,12 @@ docker-compose up
 
 #### Helm Charts
 
+##### nginx-controller
+
+```
+helm install --name ingress stable/nginx-ingress --tls
+```
+
 ##### Backend (Flasl App)
 ```
 helm install --name microsi helm-charts/micro-chart  --tls
