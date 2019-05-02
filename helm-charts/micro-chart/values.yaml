@@ -34,7 +34,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
     nginx.ingress.kubernetes.io/use-regex: "true"
     
-  paths: /api/.*
+  paths: ["/api/.*"]
   hosts:
     - backend.ingress
   tls: []
