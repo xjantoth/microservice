@@ -19,32 +19,71 @@ docker-compose up
 helm install --name ingress stable/nginx-ingress --tls
 ```
 
-##### Backend (Flasl App)
+##### Backend Helm Chart(Flask)
 ```
 helm install --name microsi helm-charts/micro-chart  --tls
 kubectl edit svc microsi-micro-chart
 curl http://<ip_address>:31637/api/saveip
 ```
 
-##### Frontend (React)
+##### Frontend Helm Chart(React)
 
 Running within a simple Nginx docker container.
 ```
 helm install --name frontend helm-charts/micro-front --tls
 ```
 
+##### Run REACT app manually at your laptop
+
+```
+cd ../frontend/
+npm install
+npm audit fix --force
+npm start
+npm run build
+```
+
+##### Run FLASK app manually
+Create python virtualenv
+```
+python3 -m venv venv_micro
+```
+
+Activate virtualenv 
+```
+source venv_micro/bin/activate
+```
+
+Install requirements from requirements.txt
+```
+pip install -r requirements.txt
+```
+
+Start Flask in non-production mode
+```
+cd ../backend
+export FLASK_APP=app
+flask run
+```    
 
 #### Run postgres instance
-
-```bash
+Clean all docker images/processes/... if neceassary
+```
 docker rmi $(docker images -q) -f
 docker ps --filter status=dead --filter status=exited -aq | xargs -r docker rm -v
-docker run --name micro-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
-a138091fa815a92d000bf0defaea791acc8daff5d22309289feee120589fd050
+docker ps -a
+docker images -a
+```
 
-psql --host=localhost --port=5432 -U postgres
-
+Start postgress as docker instance
+```bash
+docker run --name micro-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:alpine
 ```          
+
+Connect to PostgreSQL from your laptop
+```
+psql --host=localhost --port=5432 -U postgres
+```
 
 #### Create database microservice
 
@@ -56,13 +95,20 @@ GRANT ALL PRIVILEGES ON DATABASE microservice TO micro;
 ALTER DATABASE microservice OWNER TO micro;
 ```
 
-#### Connect to database
+#### Connect to database and do a simple search 
 ```sql
 psql --host=localhost --port=5432 -U micro -d microservice
 select * from request_ips;
-
-
 ```
+
+##### Stop docker container
+```
+docker ps
+docker stop micro-postgres
+docker rm micro-postgres
+```
+
+
 #### Enviromental variables 
 ```bash
 PSQL_DB_USER        default='micro'

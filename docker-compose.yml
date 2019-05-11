@@ -3,7 +3,7 @@ version: '3'
 services:
   # The front-end app in React
   frontend:
-    image: "frontend:v0.0.1"
+    image: "jantoth/frontend:v0.0.2"
     depends_on:
       - backend
     build:
@@ -16,7 +16,7 @@ services:
 
   # Python Flask backend app
   backend:
-    image: "microservice:v0.0.1"
+    image: "jantoth/microservice:v0.0.1"
     depends_on:
       - database
     build:
