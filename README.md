@@ -151,3 +151,72 @@ EOF
 helm dependency update
 
 ```
+
+##### Generate SSH key-pair
+
+```bash
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/devops -C "devops@devops.com"
+```
+
+##### Weave CNI 
+```bash
+curl -L -o weave_custom.yaml "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/24"
+kubectl create -f weave_custom.yaml
+kubectl get pods -n kube-system
+```
+
+
+##### Retrive join token from master to join worker to Kubernetes cluster
+CACERT=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
+IPETH0=$(ip a | grep eth0 | grep inet | awk -F" " '{print $2}')
+TOKEN=$(kubeadm token create)
+echo -e "kubeadm join ${IPETH0}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${CACERT}"
+
+##### Run this command on Wokrer machine to join Kubenrtes cluster
+```
+kubeadm join ${IPETH0}:6443 --token 3byhoj.k..er --discovery-token-ca-cert-hash sha256:${CACERT}
+```
+
+
+### Setup worker
+
+##### Disable Selinux
+getenforce
+setenforce 0
+sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+reboot
+
+# Disable SWAP
+swapoff -a
+
+# Setup bridge interface
+cat <<EOF >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sysctl --system
+
+# Install docker, kubelet, kubeadm, kubectl
+yum update
+yum install docker
+systemctl enable docker && systemctl start docker
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+
+
+
+
