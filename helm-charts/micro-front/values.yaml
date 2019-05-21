@@ -5,10 +5,10 @@
 replicaCount: 1
 
 readinessProbe:
-  path: /demo
+  path: /demo/
 
 livenessProbe:
-  path: /demo
+  path: /demo/
 
 image:
   repository: jantoth/frontend 
