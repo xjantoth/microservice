@@ -69,7 +69,7 @@ class App extends Component {
             />
             <Route
               exact
-              path="/"
+              path="/demo"
               render={props => (
                 <React.Fragment>
                   <IpAddresses
