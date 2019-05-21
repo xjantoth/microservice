@@ -5,10 +5,10 @@
 replicaCount: 1
 
 readinessProbe:
-  path: /demo/
+  path: /app
 
 livenessProbe:
-  path: /demo/
+  path: /app
 
 image:
   repository: jantoth/frontend 
@@ -36,7 +36,7 @@ ingress:
     nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
     - host: k8s.linuxinuse.com
-      paths: ["/demo/.*"]
+      paths: ["/app/.*"]
 
   tls: []
   #  - secretName: chart-example-tls
