@@ -5,14 +5,14 @@
 replicaCount: 1
 
 readinessProbe:
-  path: /
+  path: /demo
 
 livenessProbe:
-  path: /
+  path: /demo
 
 image:
   repository: jantoth/frontend 
-  tag: v0.0.2
+  tag: v0.0.3
   pullPolicy: IfNotPresent
   # This will be Nginx serving 
   # react app static content *.html, *.js, *.css
@@ -33,9 +33,10 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/use-regex: "true"
   hosts:
     - host: k8s.linuxinuse.com
-      paths: ["/"]
+      paths: ["/demo/.*"]
 
   tls: []
   #  - secretName: chart-example-tls
