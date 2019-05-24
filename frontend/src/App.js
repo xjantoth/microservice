@@ -63,25 +63,9 @@ class App extends Component {
         <div className="App">
           <div className="container">
             <Header />
-            <Isalive
-              active={this.state.isalive}
-
-            />
-            <Route
-              exact
-              path="/"
-              render={props => (
-                <React.Fragment>
-                  <IpAddresses
-                    allAddress={this.state.addresses}
-                  />
-                  <AddAddress onSubmit={this.saveToFlaskBackend} />
-
-                </React.Fragment>
-              )}
-            />
-
-
+            <Isalive active={this.state.isalive} />
+            <IpAddresses allAddress={this.state.addresses}/>
+            <AddAddress onSubmit={this.saveToFlaskBackend} />
             <Route
               path="/about"
               component={About}
