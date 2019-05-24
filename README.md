@@ -181,15 +181,20 @@ kubeadm join ${IPETH0}:6443 --token 3byhoj.k..er --discovery-token-ca-cert-hash 
 ### Setup worker
 
 ##### Disable Selinux
+```
 getenforce
 setenforce 0
 sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 reboot
+```        
 
 # Disable SWAP
+```
 swapoff -a
+```
 
 # Setup bridge interface
+```
 cat <<EOF >  /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -197,8 +202,10 @@ net.ipv4.ip_forward = 1
 EOF
 
 sysctl --system
+```
 
 # Install docker, kubelet, kubeadm, kubectl
+```
 yum update
 yum install docker
 systemctl enable docker && systemctl start docker
@@ -215,8 +222,19 @@ exclude=kube*
 EOF
 
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable kubelet && systemctl start kubelet
+```
 
+##### Setup firewalld at Worker 
 
+```
+# If firewalld not installed at the worker machine
+yum install firewalld -y
+systemctl enable kubelet && systemctl start kubelet
 
-
+# setup particular firewall rules to allow master/worker comunication
+firewall-cmd --permanent --add-port=30000-32767/tcp
+firewall-cmd --permanent --add-port=10250/tcp
+firewall-cmd --reload
+```
 
