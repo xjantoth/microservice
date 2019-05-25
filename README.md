@@ -158,19 +158,29 @@ helm dependency update
 ssh-keygen -t rsa -b 2048 -f ~/.ssh/devops -C "devops@devops.com"
 ```
 
-##### Weave CNI 
+##### Start Kubernetes Master node 
 ```bash
+master
+cd data/
+kubeadm init --service-cidr=192.168.1.0/24
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 curl -L -o weave_custom.yaml "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/24"
 kubectl create -f weave_custom.yaml
-kubectl get pods -n kube-system
+./securing_helm_tiller.sh
+./join_worker.sh
 ```
 
-
 ##### Retrive join token from master to join worker to Kubernetes cluster
+```
+#!/bin/bash
+
 CACERT=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
-IPETH0=$(ip a | grep eth0 | grep inet | awk -F" " '{print $2}')
+IPETH0=$(ip a | grep eth0 | grep inet | awk -F" " '{print $2}' | awk -F"/" '{print $1}')
 TOKEN=$(kubeadm token create)
+
+# Copy and paste this string to Worker machine and execute it!
 echo -e "kubeadm join ${IPETH0}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${CACERT}"
+```
 
 ##### Run this command on Wokrer machine to join Kubenrtes cluster
 ```
@@ -230,7 +240,7 @@ systemctl enable kubelet && systemctl start kubelet
 ```
 # If firewalld not installed at the worker machine
 yum install firewalld -y
-systemctl enable kubelet && systemctl start kubelet
+systemctl enable firewalld && systemctl start firewalld
 
 # setup particular firewall rules to allow master/worker comunication
 firewall-cmd --permanent --add-port=30000-32767/tcp
