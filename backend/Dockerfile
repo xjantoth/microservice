@@ -19,5 +19,5 @@ ENTRYPOINT ["gunicorn"]
 
 CMD ["--bind", "0.0.0.0:8000", "app:app"]
 
-# docker build -t microservice:v0.0.1 .
+# docker build -t <your-account>/microservice:v0.0.1 .
 # docker run --rm --name micro-service -it -e PSQL_DB_ADDRESS=192.168.1.45 -p 5001:8000 -d microservice:v0.0.1
