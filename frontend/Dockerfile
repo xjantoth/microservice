@@ -14,5 +14,9 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
 
-# docker run --rm --name ft -it -d jantoth/frontend:v0.0.3
+# cd frontend
+# docker build -t jantoth/frontend:v0.0.3 .
+
+# Run front-end React as docker container locally
+# docker run --rm --name ft -it -p 3001:80 -d jantoth/frontend:v0.0.3
 # docker exec -it ft sh
