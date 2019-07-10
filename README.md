@@ -11,6 +11,8 @@
     3. [Frontend helm chart deployment](#frontend-helm-chart-deployment)
 4. [Nginx Controller Proxy](#nginx-controller-proxy)
 5. [Dummy helm chart deployment](#dummy-helm-chart-deployment)
+6. [Master Kubernetes configuration](master.md)
+7. [Node/Worker Kubernetes configuration](node.md)
 
 
 ## Run PostgreSQL database locally as docker container <a name="database"></a>
