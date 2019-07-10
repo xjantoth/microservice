@@ -1,5 +1,12 @@
+# Table of contents
+1. [Database](#database)
+2. [Some paragraph](#paragraph1)
+    1. [Sub paragraph](#subparagraph1)
+3. [Another paragraph](#paragraph2)
 
-## Run PostgreSQL database locally as docker container
+
+
+## Run PostgreSQL database locally as docker container <a name="database"></a>
 
 ```bash
 # Clean all docker images/processes/... if neceassary
