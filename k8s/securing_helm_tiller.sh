@@ -56,7 +56,7 @@ EOF
 }
 # Create ServiceAccount && ClusterRoleBinding for tiller
 
-function main {
+function secure_helm_tiller {
     echo  -e "\nGenerating certificates"
     generate_certs
     echo -e "\nCreating ServiceAccount and CRB"
@@ -77,4 +77,4 @@ function main {
     cd ..
 }
 
-main
+secure_helm_tiller
