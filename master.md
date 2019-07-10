@@ -63,6 +63,7 @@ firewall-cmd --permanent --add-port=6783/tcp
 firewall-cmd --permanent --add-port=6783/udp
 firewall-cmd --permanent --add-port=6784/udp
 firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -j ACCEPT
+# firewall-cmd --add-masquerade --permanent
 firewall-cmd --reload
 
 # Initiate Kubernetes master
