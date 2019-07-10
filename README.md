@@ -1,9 +1,16 @@
 # Table of contents
 1. [Database](#database)
-2. [Some paragraph](#paragraph1)
-    1. [Sub paragraph](#subparagraph1)
-3. [Another paragraph](#paragraph2)
-
+2. [Backend Python Flask app](#backend)
+    1. [Env. variables](#env-variables)
+    2. [Run backend locally](#run-backend-locally)
+    3. [Run backend as docker container locally](#run-backend-as-docker-container-locally)
+    4. [Backend helm chart deployment](#backend-helm-chart-deployment)
+3. [Frontend](#frontend)
+    1. [Run frontend locally](#run-frontend-locally)
+    2. [Run frontend as docker container locally](#run-frontend-as-docker-container-locally)
+    3. [Frontend helm chart deployment](#frontend-helm-chart-deployment)
+4. [Nginx Controller Proxy](#nginx-controller-proxy)
+5. [Dummy helm chart deployment](#dummy-helm-chart-deployment)
 
 
 ## Run PostgreSQL database locally as docker container <a name="database"></a>
@@ -30,9 +37,9 @@ psql --host=localhost --port=5432 -U micro -d microservice
 select * from request_ips;
 ```
 
-## Backend - Python Flask
+## Backend - Python Flask <a name="backend"></a>
 
-#### Overview of backend env. variables 
+#### Overview of backend env. variables <a name="env-variables"></a>
 
 Following environmental variables are used inside docker image.
 
@@ -44,7 +51,7 @@ PSQL_DB_ADDRESS     default='127.0.0.1'
 PSQL_DB_PORT        default='5432'
 ```
 
-#### Run backend locally
+#### Run backend locally <a name="run-backend-locally"></a>
 
 ```bash
 # Create python virtualenv
@@ -62,7 +69,7 @@ export FLASK_APP=app
 flask run
 ```
 
-#### Run backend as docker container locally
+#### Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>
 
 ```bash
 # Stop and remove docker container process if previously started
@@ -82,7 +89,7 @@ docker run \
 ```
 
 
-#### Backend helm chart deployment
+#### Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>
 
 Backend (Python Flask) helm chart (micro-chart) is dependent on a database PostgreSQL.<br>
 There is the way how one can include database as dependency for<br>
@@ -126,9 +133,9 @@ Verify your backend deployment via:
 curl http://<ip_address>:30222/api/saveip
 ```
 
-## Frontend - React 
+## Frontend - React <a name="frontend"></a>
 
-#### Run frontend locally
+#### Run frontend locally <a name="run-frontend-locally"></a>
 
 Please execute following lines when running React frontend app<br>
 locally (e.g. at your laptop)
@@ -141,7 +148,21 @@ npm start
 npm run build
 ```
 
-#### Helm chart deployment
+#### Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>
+
+```bash
+cd frontend
+# Build frontend docker image
+docker build -t <account>/frontend:v0.0.3 .
+
+# Run front-end React as docker container locally
+docker run --rm --name ft -it -p 3001:80 -d <account>/frontend:v0.0.3
+
+# Get inside docker container
+docker exec -it ft sh
+```
+
+#### Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>
 
 ```bash
 helm install \
@@ -150,7 +171,7 @@ helm-charts/micro-front \
 --tls
 ```
 
-## Nginx Controller Proxy
+## Nginx Controller Proxy <a name="nginx-controller-proxy"></a>
 
 If want to avoid exposing **NodePort** service <br>
 type for each app deployed in Kubenretes - please <br>
@@ -160,7 +181,7 @@ use following deployment:
 helm install --name ingress stable/nginx-ingress --tls
 ```
 
-## Dummy helm chart deployment
+## Dummy helm chart deployment <a name="dummy-helm-chart-deployment"></a>
 
 If there is someone who does not know anything about <br>
 helm charts there is a simple deployment available <br>
@@ -176,6 +197,3 @@ helm install \
 stable/dokuwiki \
 --tls
 ```
-
-
-
