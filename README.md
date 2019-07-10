@@ -94,7 +94,7 @@ docker run \
 #### Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>
 
 Backend (Python Flask) helm chart (micro-chart) is dependent on a database PostgreSQL.<br>
-There is the way how one can include database as dependency for<br>
+There are two options how one can include database (postgresql) as dependency for this helm chart:<br>
 backend helm chart.
 
 1) create **requirements.yaml** file inside **micro-chart**
@@ -127,6 +127,12 @@ helm install \
 --set service.nodePort=30222 \
 helm-charts/micro-chart \
 --tls
+
+# Update already deployed helm chart
+helm upgrade microsi helm-charts/micro-chart --tls
+
+# Delete helm chart deployment 
+helm delete --purge microsi --tls
 ```
 
 Verify your backend deployment via:
