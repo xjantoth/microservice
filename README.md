@@ -141,7 +141,7 @@ Verify your backend deployment via:
 curl http://<ip_address>:30222/api/saveip
 ```
 
-## Frontend - React <a name="frontend"></a>
+## Frontend - React app <a name="frontend"></a>
 
 #### Run frontend locally <a name="run-frontend-locally"></a>
 
@@ -172,9 +172,14 @@ docker exec -it ft sh
 
 #### Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>
 
+If want to quickly expose frontend app as service type NodePort<br>
+to be able to access it immediately - please use following command:
+
 ```bash
 helm install \
 --name frontend \
+--set service.type=NodePort \
+--set service.nodePort= 30333 \
 helm-charts/micro-front \
 --tls
 ```
