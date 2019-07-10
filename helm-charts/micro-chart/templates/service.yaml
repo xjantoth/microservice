@@ -14,6 +14,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+      nodePort: {{ .Values.service.nodePort }}
   selector:
     app.kubernetes.io/name: {{ include "micro-chart.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

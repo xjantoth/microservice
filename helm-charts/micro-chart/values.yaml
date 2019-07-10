@@ -26,6 +26,7 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 8000
+  nodePort: 30222
 
 ingress:
   enabled: true
