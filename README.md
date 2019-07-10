@@ -170,25 +170,33 @@ stable/dokuwiki \
 --tls
 ```
 
-## Start Kubernetes Master node 
+## Configure Kubernetes Master 
 
 ```bash
 # Please generate ssh key pair if required
 ssh-keygen -t rsa -b 2048 -f ~/.ssh/devops -C "devops@devops.com"
 
-master
-cd data/
+# SSH to you Kubenretes master server
+ssh <user>@<ip-address>
+
+
+# Initiate Kubernetes master
 kubeadm init --service-cidr=192.168.1.0/24
+
+# 
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+# Download file: weave_custom.yaml 
 curl -L -o weave_custom.yaml "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/24"
+
+# Execute previously downloaded file: file
 kubectl create -f weave_custom.yaml
+
 ./securing_helm_tiller.sh
-./join_worker.sh
-```
 
 
-```
 # Retrive join token from master to join worker to Kubernetes cluster
+cat <<EOF >  /tmp/show-join-to-k8s-command.sh
 #!/bin/bash
 
 CACERT=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
@@ -197,16 +205,16 @@ TOKEN=$(kubeadm token create)
 
 # Copy and paste this string to Worker machine and execute it!
 echo -e "kubeadm join ${IPETH0}:6443 --token ${TOKEN} --discovery-token-ca-cert-hash sha256:${CACERT}"
-```
+EOF
 
-##### Run this command on Wokrer machine to join Kubenrtes cluster
-```
-kubeadm join ${IPETH0}:6443 --token 3byhoj.k..er --discovery-token-ca-cert-hash sha256:${CACERT}
-```
+# Grant executable permissions 
+chmod +x /tmp/show-join-to-k8s-command.sh
 
+# Execute show-join-to-k8s-command.sh script to retrive join to k8s command
+/tmp/./show-join-to-k8s-command.sh
+```
 
 ## Setup Kubernetes Node/Worker
-
 
 ```bash
 # Disable Selinux
@@ -233,6 +241,7 @@ yum update
 yum install docker
 systemctl enable docker && systemctl start docker
 
+# Create kubernetes yum repository
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -244,10 +253,9 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 exclude=kube*
 EOF
 
+# Install important packages
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable kubelet && systemctl start kubelet
-
-
 
 
 # setup particular firewall rules to allow master/worker comunication
@@ -262,10 +270,7 @@ firewall-cmd --permanent --add-port=6784/udp
 firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -j ACCEPT
 # firewall-cmd --add-masquerade --permanent
 firewall-cmd --reload
-```
 
-#### Articles to read
-https://kubernetes.io/docs/tasks/access-application-cluster/connecting-frontend-backend/
-https://mherman.org/blog/dockerizing-a-react-app/
-https://medium.com/greedygame-engineering/so-you-want-to-dockerize-your-react-app-64fbbb74c217
-ENV VAR for REACT APP: https://www.jeffgeerling.com/blog/2018/deploying-react-single-page-web-app-kubernetes
+# Run join command generated at Kubernetes Master
+kubeadm join ...
+```
