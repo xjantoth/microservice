@@ -27,6 +27,7 @@ service:
   # This will by default point out to 
   # `containerPort: 80` from section: image
   targetPort: 80
+  nodePort: 30333
 
 ingress:
   enabled: true
