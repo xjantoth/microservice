@@ -179,10 +179,12 @@ to be able to access it immediately - please use following command:
 helm install \
 --name frontend \
 --set service.type=NodePort \
---set service.nodePort= 30333 \
+--set service.nodePort=30333 \
 helm-charts/micro-front \
 --tls
 ```
+
+![](images/react-frontend.png)
 
 ## Nginx Controller Proxy <a name="nginx-controller-proxy"></a>
 
@@ -191,7 +193,15 @@ type for each app deployed in Kubenretes - please <br>
 use following deployment:
 
 ```bash
-helm install --name ingress stable/nginx-ingress --tls
+helm install \
+--name ingress \
+--set controller.service.type=NodePort \
+--set controller.service.nodePorts.http=30444 \
+stable/nginx-ingress \
+--tls
+
+# Delete nginx ingress controller
+helm delete --purge ingress --tls
 ```
 
 ## Dummy helm chart deployment <a name="dummy-helm-chart-deployment"></a>
