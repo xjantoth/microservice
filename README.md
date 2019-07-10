@@ -18,13 +18,14 @@ docker-compose up
 Dummy Dokuwiki deployment by using helm chart
 
 ```bash
-helm install --name dw \ 
-     --set service.type=NodePort \
-     --set service.nodePorts.http=30111 \
-     --set persistence.enabled=false \
-     --set dokuwikiUsername=admin,dokuwikiPassword=password \
-     stable/dokuwiki \
-     --tls
+helm install \
+--name dw \
+--set service.type=NodePort \
+--set service.nodePorts.http=30111 \
+--set persistence.enabled=false \
+--set dokuwikiUsername=admin,dokuwikiPassword=password \
+stable/dokuwiki \
+--tls
 ```
 
 
