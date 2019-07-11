@@ -1,55 +1,36 @@
 ## Configure Kubernetes Master 
 
 ```bash
+# *****************************************
 # Please generate ssh key pair if required
+# *****************************************
 ssh-keygen -t rsa -b 2048 -f ~/.ssh/devops -C "devops@devops.com"
 
+
+# *****************************************
 # SSH to you Kubenretes master server
+# *****************************************
 ssh <user>@<ip-address>
 
+# *****************************************
 # Disable Selinux
+# *****************************************
 getenforce
 setenforce 0
 sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 reboot
 
+
+# *****************************************
 # Disable SWAP
+# *****************************************
 swapoff -a
 
 
-# Setup bridge interface
-cat <<EOF >  /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
-EOF
-sysctl --system
-
-
-# Install helm binary
-function install_helm {
-    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
-    chmod 700 get_helm.sh
-    ./get_helm.sh
-}
-
-install_helm
-
-# Create kubernetes yum repository
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kube*
-EOF
-
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-
-# setup particular firewall rules to allow master/worker comunication
+# *****************************************
+# Setup firewall rules to allow 
+# Master/Worker communication within cluster
+# *****************************************
 yum install firewalld -y
 systemctl enable firewalld && systemctl start firewalld
 
@@ -66,19 +47,78 @@ firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -j ACCEPT
 # firewall-cmd --add-masquerade --permanent
 firewall-cmd --reload
 
-# Initiate Kubernetes master
+
+# *****************************************
+# Setup bridge interface
+# *****************************************
+cat <<EOF >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+sysctl --system
+
+
+# *****************************************
+# Install docker
+# *****************************************
+yum update && yum install docker
+systemctl enable docker && systemctl start docker
+
+
+# *****************************************
+# Install kubelet kubeadm kubectl packages
+# Create kubernetes yum repository
+# *****************************************
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+
+# *****************************************
+# Start/Initiate Kubernetes Master
+# *****************************************
 kubeadm init --service-cidr=192.168.1.0/24
 
-# Copy admin.conf to a proper location to be able to use kubectl
+
+# *****************************************
+# Copy admin.conf to a proper location 
+# to be able to use kubectl
+# *****************************************
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
+# *****************************************
 # Download file: weave_custom.yaml 
-curl -L -o weave_custom.yaml "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/24"
-
+# *****************************************
+curl \
+-L \
+-o weave_custom.yaml \
+"https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/24"
 # Execute previously downloaded file: file
 kubectl create -f weave_custom.yaml
 
+
+# *****************************************
+# Install helm binary
+# *****************************************
+function install_helm {
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+}
+install_helm
+
+# *****************************************
 # Setting up helm-tiller communication
+# *****************************************
 function generate_certs {
     dir="certs"
     if [ ! -d $dir ]
