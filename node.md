@@ -20,7 +20,7 @@ EOF
 sysctl --system
 
 
-# Install docker, kubelet, kubeadm, kubectl
+# Install docker
 yum update
 yum install docker
 systemctl enable docker && systemctl start docker
