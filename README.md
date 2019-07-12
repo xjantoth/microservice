@@ -89,6 +89,9 @@ docker run \
 -p 5001:8000 \
 -d <account>/microservice:v0.0.1
 
+# Get inside docker container
+docker exec -it micro-service sh
+
 # Push docker image to public docker registry
 docker login
 docker push <account>/microservice:v0.0.1
@@ -172,6 +175,10 @@ docker run --rm --name ft -it -p 3001:80 -d <account>/frontend:v0.0.3
 
 # Get inside docker container
 docker exec -it ft sh
+
+# Push docker image to public docker registry
+docker login
+docker push <account>/frontend:v0.0.3
 ```
 
 #### Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>
