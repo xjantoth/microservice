@@ -87,7 +87,11 @@ docker run \
 -it \
 -e PSQL_DB_ADDRESS=192.168.1.45 \
 -p 5001:8000 \
--d microservice:v0.0.1
+-d <account>/microservice:v0.0.1
+
+# Push docker image to public docker registry
+docker login
+docker push <account>/microservice:v0.0.1
 ```
 
 
