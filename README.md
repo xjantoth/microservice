@@ -13,6 +13,7 @@
 5. [Dummy helm chart deployment](#dummy-helm-chart-deployment)
 6. [Master Kubernetes configuration](master.md)
 7. [Node/Worker Kubernetes configuration](node.md)
+8. [Troubleshooting section](#troubleshooting)
 
 
 ## Run PostgreSQL database locally as docker container <a name="database"></a>
@@ -215,7 +216,7 @@ stable/nginx-ingress \
 helm delete --purge ingress --tls
 ```
 
-## Dummy helm chart deployment <a name="dummy-helm-chart-deployment"></a>
+## Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>
 
 If there is someone who does not know anything about <br>
 helm charts there is a simple deployment available <br>
@@ -231,3 +232,39 @@ helm install \
 stable/dokuwiki \
 --tls
 ```
+
+## Troubleshooting section <a name="troubleshooting"></a>
+
+There are plenty of situations when one needs to troubleshoot network connections between apps running inside pods and docker containers.
+
+It is very useful to start a **busybox** pod and exec to this running pod:
+
+```bash
+
+kubectl apply -f https://k8s.io/examples/admin/dns/busybox.yaml
+
+# Verify that busybox pod has been started
+[root@k8s-master ~]# kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+busybox   1/1     Running   92         3d19h
+
+# Exec to busybox pod
+root@k8s-master ~]# kubectl exec -it busybox -- sh 
+/ # 
+/ # uname -n 
+busybox
+/ # ip a | grep -E "inet "
+    inet 127.0.0.1/8 scope host lo
+    inet 192.168.0.66/24 brd 192.168.0.255 scope global eth0
+
+```
+
+Well now one get inside the pod which is on the same network as the rest of the pods. 
+
+The **advantage** it that inside the pod there are commands like:
+
+* wget
+* telnet
+* netstat
+
+available.
