@@ -11,7 +11,7 @@ livenessProbe:
   path: /api/isalive
 
 env: 
-  "PSQL_DB_ADDRESS": "microsi-postgresql"
+  "PSQL_DB_ADDRESS": "backend-postgresql"
 
 image:
   repository: jantoth/microservice         
@@ -74,7 +74,7 @@ postgresql:
   
   persistence:
     enabled: false
-    existingClaim: data-microsi-postgresql-0
+    existingClaim: data-backend-postgresql-0
  
   pgHbaConfiguration: |
     local all all trust

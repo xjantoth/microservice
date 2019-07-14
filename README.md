@@ -133,7 +133,7 @@ helm dependency update
 
 # Deploy backend helm chart
 helm install \
---name microsi \
+--name backend \
 --set service.type=NodePort \
 --set service.nodePort=30222 \
 helm-charts/micro-backend \
@@ -141,13 +141,13 @@ helm-charts/micro-backend \
 
 # See what is going on in logs
 kubectl logs -f \
-$(kubectl get pods | grep microsi-micro-backend | awk -F" " {'print $1'})
+$(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
 
 # Update already deployed helm chart
-helm upgrade microsi helm-charts/micro-backend --tls
+helm upgrade backend helm-charts/micro-backend --tls
 
 # Delete helm chart deployment 
-helm delete --purge microsi --tls
+helm delete --purge backend --tls
 ```
 
 Verify your backend deployment via:
@@ -201,6 +201,9 @@ helm install \
 --set service.nodePort=30333 \
 helm-charts/micro-frontend \
 --tls
+
+# See frontend pod logs fron docker container
+kubectl logs -f $(kubectl get pods | grep frontend-micro-frontend | awk -F" " {'print $1'})
 ```
 
 ![](images/react-frontend.png)

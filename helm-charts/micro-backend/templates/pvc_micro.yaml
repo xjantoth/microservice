@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: data-microsi-postgresql-0
+  name: data-backend-postgresql-0
 spec:
   storageClassName: manual
   accessModes:
