@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "micro-chart.fullname" . -}}
+{{- $fullName := include "micro-backend.fullname" . -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    app.kubernetes.io/name: {{ include "micro-chart.name" . }}
-    helm.sh/chart: {{ include "micro-chart.chart" . }}
+    app.kubernetes.io/name: {{ include "micro-backend.name" . }}
+    helm.sh/chart: {{ include "micro-backend.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   {{- with .Values.ingress.annotations }}

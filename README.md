@@ -101,11 +101,11 @@ docker push <account>/microservice:v0.0.1
 
 #### Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>
 
-Backend (Python Flask) helm chart (micro-chart) is dependent on a database PostgreSQL.<br>
+Backend (Python Flask) helm chart (micro-backend) is dependent on a database PostgreSQL.<br>
 There are two options how one can include database (postgresql) as dependency for this helm chart:<br>
 backend helm chart.
 
-1) create **requirements.yaml** file inside **micro-chart**
+1) create **requirements.yaml** file inside **micro-backend**
 
 ```bash
 # Create requirements.yaml file
@@ -120,7 +120,7 @@ EOF
 helm dependency update
 ```
 
-2) download **postgresql** helm chart by using `helm fetch <repo>/<chart-name>` <br>and copy it to **charts/** folder inside your helm chart (micro-chart)
+2) download **postgresql** helm chart by using `helm fetch <repo>/<chart-name>` <br>and copy it to **charts/** folder inside your helm chart (micro-backend)
 
 ```bash
 helm fetch stable/postgresql
@@ -133,11 +133,11 @@ helm install \
 --name microsi \
 --set service.type=NodePort \
 --set service.nodePort=30222 \
-helm-charts/micro-chart \
+helm-charts/micro-backend \
 --tls
 
 # Update already deployed helm chart
-helm upgrade microsi helm-charts/micro-chart --tls
+helm upgrade microsi helm-charts/micro-backend --tls
 
 # Delete helm chart deployment 
 helm delete --purge microsi --tls
@@ -268,3 +268,9 @@ The **advantage** it that inside the pod there are commands like:
 * netstat
 
 available.
+
+### If helm chart has to be renamed 
+
+```bash
+find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {} +
+```
