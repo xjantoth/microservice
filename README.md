@@ -128,6 +128,9 @@ cp postgresql*.tgz charts/
 ```
 
 ```bash
+# Before the very first deployment 
+helm dependency update
+
 # Deploy backend helm chart
 helm install \
 --name microsi \
@@ -135,6 +138,10 @@ helm install \
 --set service.nodePort=30222 \
 helm-charts/micro-backend \
 --tls
+
+# See what is going on in logs
+kubectl logs -f \
+$(kubectl get pods | grep microsi-micro-backend | awk -F" " {'print $1'})
 
 # Update already deployed helm chart
 helm upgrade microsi helm-charts/micro-backend --tls
@@ -192,7 +199,7 @@ helm install \
 --name frontend \
 --set service.type=NodePort \
 --set service.nodePort=30333 \
-helm-charts/micro-front \
+helm-charts/micro-frontend \
 --tls
 ```
 
@@ -269,7 +276,7 @@ The **advantage** it that inside the pod there are commands like:
 
 available.
 
-### If helm chart has to be renamed 
+### If helm chart has to be renamed from foo to bar
 
 ```bash
 find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {} +

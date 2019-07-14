@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "micro-front.fullname" . }}
+  name: {{ include "micro-frontend.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "micro-front.name" . }}
-    helm.sh/chart: {{ include "micro-front.chart" . }}
+    app.kubernetes.io/name: {{ include "micro-frontend.name" . }}
+    helm.sh/chart: {{ include "micro-frontend.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "micro-front.name" . }}
+      app.kubernetes.io/name: {{ include "micro-frontend.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "micro-front.name" . }}
+        app.kubernetes.io/name: {{ include "micro-frontend.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
