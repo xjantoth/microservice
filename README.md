@@ -1,19 +1,19 @@
 # Table of contents
-1. [Database](#database)
-2. [Backend Python Flask app](#backend)
-    - [Env. variables](#env-variables)
-    - [Run backend locally](#run-backend-locally)
-    - [Run backend as docker container locally](#run-backend-as-docker-container-locally)
-    - [Backend helm chart deployment](#backend-helm-chart-deployment)
-3. [Frontend](#frontend)
-    - [Run frontend locally](#run-frontend-locally)
-    - [Run frontend as docker container locally](#run-frontend-as-docker-container-locally)
-    - [Frontend helm chart deployment](#frontend-helm-chart-deployment)
-4. [Nginx Controller Proxy](#nginx-controller-proxy)
-5. [Dummy helm chart deployment](#dummy-helm-chart-deployment)
-6. [Master Kubernetes configuration](master.md)
-7. [Node/Worker Kubernetes configuration](node.md)
-8. [Troubleshooting section](#troubleshooting)
+- [Table of contents](#Table-of-contents)
+  - [Run PostgreSQL database locally as docker container <a name="database"></a>](#Run-PostgreSQL-database-locally-as-docker-container-a-name%22database%22a)
+  - [Backend - Python Flask <a name="backend"></a>](#Backend---Python-Flask-a-name%22backend%22a)
+      - [Overview of backend env. variables <a name="env-variables"></a>](#Overview-of-backend-env-variables-a-name%22env-variables%22a)
+      - [Run backend locally <a name="run-backend-locally"></a>](#Run-backend-locally-a-name%22run-backend-locally%22a)
+      - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#Run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
+      - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#Backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
+  - [Frontend - React app <a name="frontend"></a>](#Frontend---React-app-a-name%22frontend%22a)
+      - [Run frontend locally <a name="run-frontend-locally"></a>](#Run-frontend-locally-a-name%22run-frontend-locally%22a)
+      - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#Run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
+      - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#Frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
+  - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#Nginx-Controller-Proxy-a-name%22nginx-controller-proxy%22a)
+  - [Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>](#Getting-started-with-a-helm-chart-deployment-a-name%22dummy-helm-chart-deployment%22a)
+  - [Troubleshooting section <a name="troubleshooting"></a>](#Troubleshooting-section-a-name%22troubleshooting%22a)
+    - [If helm chart has to be renamed from foo to bar](#If-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
 
 ## Run PostgreSQL database locally as docker container <a name="database"></a>
@@ -139,6 +139,10 @@ helm install \
 helm-charts/micro-backend \
 --tls
 
+# Describe backend pod
+kubectl describe pod \
+$(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
+
 # See what is going on in logs
 kubectl logs -f \
 $(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
@@ -202,9 +206,27 @@ helm install \
 helm-charts/micro-frontend \
 --tls
 
+# Describe frontend pod
+kubectl describe pod \
+$(kubectl get pods | grep frontend-micro-frontend | awk -F" " {'print $1'})
+
 # See frontend pod logs fron docker container
 kubectl logs -f $(kubectl get pods | grep frontend-micro-frontend | awk -F" " {'print $1'})
+
+# Update already deployed helm chart
+helm upgrade frontend helm-charts/micro-backend --tls
+
+# Delete helm chart deployment 
+helm delete --purge frontend --tls
 ```
+
+Verify your frontend deployment via:
+
+```bash
+curl http://<ip_address>:30333/api/saveip
+```
+
+
 
 ![](images/react-frontend.png)
 
