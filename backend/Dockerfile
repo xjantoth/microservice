@@ -19,5 +19,6 @@ ENTRYPOINT ["gunicorn"]
 
 CMD ["--bind", "0.0.0.0:8000", "app:app"]
 
-# docker build -t <your-account>/microservice:v0.0.1 .
-# docker run --rm --name micro-service -it -e PSQL_DB_ADDRESS=192.168.1.45 -p 5001:8000 -d microservice:v0.0.1
+# cd backend/ && export FLASK_APP=app && flask run  # port 5000   
+# docker build -t <account>/microservice:v0.0.1 .
+# docker run --rm --name micro-service -it -e PSQL_DB_ADDRESS=192.168.1.45 -p 5001:8000 -d <account>/microservice:v0.0.1
