@@ -6,6 +6,7 @@
       - [Run backend locally <a name="run-backend-locally"></a>](#Run-backend-locally-a-name%22run-backend-locally%22a)
       - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#Run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
       - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#Backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
+      - [Render templates files](#Render-templates-files)
   - [Frontend - React app <a name="frontend"></a>](#Frontend---React-app-a-name%22frontend%22a)
       - [Run frontend locally <a name="run-frontend-locally"></a>](#Run-frontend-locally-a-name%22run-frontend-locally%22a)
       - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#Run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
@@ -158,6 +159,15 @@ Verify your backend deployment via:
 
 ```bash
 curl http://<ip_address>:30222/api/saveip
+```
+
+#### Render templates files
+
+```bash
+/opt/microservice
+helm template -x templates/service.yaml helm-charts/micro-backend
+helm template -x templates/ingress.yaml helm-charts/micro-backend 
+helm template -x templates/deployment.yaml helm-charts/micro-backend
 ```
 
 ## Frontend - React app <a name="frontend"></a>
