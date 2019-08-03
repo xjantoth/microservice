@@ -1,20 +1,28 @@
 # Table of contents
-- [Table of contents](#Table-of-contents)
-  - [Run PostgreSQL database locally as docker container <a name="database"></a>](#Run-PostgreSQL-database-locally-as-docker-container-a-name%22database%22a)
-  - [Backend - Python Flask <a name="backend"></a>](#Backend---Python-Flask-a-name%22backend%22a)
-      - [Overview of backend env. variables <a name="env-variables"></a>](#Overview-of-backend-env-variables-a-name%22env-variables%22a)
-      - [Run backend locally <a name="run-backend-locally"></a>](#Run-backend-locally-a-name%22run-backend-locally%22a)
-      - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#Run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
-      - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#Backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
-      - [Render templates files](#Render-templates-files)
-  - [Frontend - React app <a name="frontend"></a>](#Frontend---React-app-a-name%22frontend%22a)
-      - [Run frontend locally <a name="run-frontend-locally"></a>](#Run-frontend-locally-a-name%22run-frontend-locally%22a)
-      - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#Run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
-      - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#Frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
-  - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#Nginx-Controller-Proxy-a-name%22nginx-controller-proxy%22a)
-  - [Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>](#Getting-started-with-a-helm-chart-deployment-a-name%22dummy-helm-chart-deployment%22a)
-  - [Troubleshooting section <a name="troubleshooting"></a>](#Troubleshooting-section-a-name%22troubleshooting%22a)
-    - [If helm chart has to be renamed from foo to bar](#If-helm-chart-has-to-be-renamed-from-foo-to-bar)
+- [Table of contents](#table-of-contents)
+  - [Run PostgreSQL database locally as docker container <a name="database"></a>](#run-postgresql-database-locally-as-docker-container-a-name%22database%22a)
+  - [Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>](#getting-started-with-a-helm-chart-deployment-a-name%22dummy-helm-chart-deployment%22a)
+  - [Backend - Python Flask <a name="backend"></a>](#backend---python-flask-a-name%22backend%22a)
+      - [Overview of backend env. variables <a name="env-variables"></a>](#overview-of-backend-env-variables-a-name%22env-variables%22a)
+      - [Run backend locally <a name="run-backend-locally"></a>](#run-backend-locally-a-name%22run-backend-locally%22a)
+      - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
+      - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
+      - [Get inside busybox and call your flask instance](#get-inside-busybox-and-call-your-flask-instance)
+      - [Get inside python instance POD and call your flask instance](#get-inside-python-instance-pod-and-call-your-flask-instance)
+      - [Scale up/down your back-end app deployment](#scale-updown-your-back-end-app-deployment)
+      - [Render templates files](#render-templates-files)
+  - [Frontend - React app <a name="frontend"></a>](#frontend---react-app-a-name%22frontend%22a)
+      - [Run frontend locally <a name="run-frontend-locally"></a>](#run-frontend-locally-a-name%22run-frontend-locally%22a)
+      - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
+      - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
+      - [Scale up/down your front-end app deployment](#scale-updown-your-front-end-app-deployment)
+  - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
+  - [Create helm chart repository at your Github repository](#create-helm-chart-repository-at-your-github-repository)
+  - [Deploy micro-backend and micro-frontend helm chart from Github](#deploy-micro-backend-and-micro-frontend-helm-chart-from-github)
+  - [Create helm chart repository based on Chartmuseum helm chart](#create-helm-chart-repository-based-on-chartmuseum-helm-chart)
+  - [Deploy micro-backend and micro-frontend helm chart from Chartmuseum](#deploy-micro-backend-and-micro-frontend-helm-chart-from-chartmuseum)
+  - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
+    - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
 
 ## Run PostgreSQL database locally as docker container <a name="database"></a>
@@ -40,6 +48,24 @@ ALTER DATABASE microservice OWNER TO micro;
 psql --host=localhost --port=5432 -U micro -d microservice
 select * from request_ips;
 ```
+
+## Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>
+
+If there is someone who does not know anything about <br>
+helm charts there is a simple deployment available <br>
+Dummy Dokuwiki deployment by using helm chart
+
+```bash
+helm install \
+--name dw \
+--set service.type=NodePort \
+--set service.nodePorts.http=30111 \
+--set persistence.enabled=false \
+--set dokuwikiUsername=admin,dokuwikiPassword=password \
+stable/dokuwiki \
+--tls
+```
+
 
 ## Backend - Python Flask <a name="backend"></a>
 
@@ -161,6 +187,59 @@ Verify your backend deployment via:
 curl http://<ip_address>:30222/api/saveip
 ```
 
+#### Get inside busybox and call your flask instance
+
+```bash
+# get inside your busybox
+kubectl exec -it busybox -- sh
+
+uname -n
+ip a
+wget -O - http://backend-micro-backend:80/api/isalive
+wget -O - http://backend-micro-backend:80/api/getallips
+wget -O - http://backend-micro-backend:80/api/saveip
+wget -O - http://backend-micro-backend:80/api/getallips
+```
+
+#### Get inside python instance POD and call your flask instance
+
+```bash
+kubectl exec -it backend-micro-backend-7d887bb858-sd9hb -- sh
+
+ps -ef 
+PID   USER     TIME  COMMAND
+1  root       7:08 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8000
+8  root      18:42 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8000
+23 root      0:00 sh
+
+wget -O - http://127.0.0.1:8000/api/isalive
+wget -O - http://127.0.0.1:8000/api/saveip
+wget -O - http://127.0.0.1:8000/api/getallips
+```
+
+
+#### Scale up/down your back-end app deployment
+
+```bash
+# Describe micro-backend svc
+kubectl \
+describe \
+svc \
+$(kubectl get svc | grep micro-backend | awk -F" " '{print $1}')
+
+# Check number of micro-backend pods
+kubectl get pods -o wide| grep micro-backend
+
+# Scale up your back-end deployment to rs=3
+helm upgrade backend \
+--set replicaCount=3 \
+--set service.nodePort= \
+helm-charts/micro-backend \
+--tls
+
+
+```
+
 #### Render templates files
 
 ```bash
@@ -236,17 +315,54 @@ Verify your frontend deployment via:
 curl http://<ip_address>:30333/api/saveip
 ```
 
+#### Scale up/down your front-end app deployment
+
+```bash
+# Describe micro-frontend svc
+kubectl \
+describe \
+svc \
+$(kubectl get svc | grep micro-frontend | awk -F" " '{print $1}')
+
+# Check number of micro-frontend pods
+kubectl get pods -o wide| grep micro-frontend
+
+# Scale up your front-end deployment to rs=2
+helm upgrade frontend \
+--set replicaCount=2 \
+--set service.nodePort= \
+helm-charts/micro-frontend \
+--tls
+```
+
 
 
 ![](images/react-frontend.png)
 
 ## Nginx Controller Proxy <a name="nginx-controller-proxy"></a>
 
+You must have an ingress controller to satisfy an Ingress. Only creating an Ingress resource has no effect. <br>
 If want to avoid exposing **NodePort** service <br>
 type for each app deployed in Kubenretes - please <br>
 use following deployment:
 
 ```bash
+
+# Remove NodePort from backend deployment
+helm upgrade backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+helm-charts/micro-backend \
+--tls
+
+# Remove NodePort from frontend deployment
+helm upgrade frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+helm-charts/micro-frontend \
+--tls
+
+# nginx-ingress deployment
 helm install \
 --name ingress \
 --set controller.service.type=NodePort \
@@ -254,24 +370,160 @@ helm install \
 stable/nginx-ingress \
 --tls
 
+# Explore nginx-ingress configuration
+kubectl \
+exec \
+-it \
+$(kubectl get pods | grep "nginx-ingress-controller" | awk -F" " '{print $1}')\
+ -- cat /etc/nginx/nginx.conf > \
+ /tmp/nginx-controller.conf
+
 # Delete nginx ingress controller
 helm delete --purge ingress --tls
 ```
 
-## Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>
+## Create helm chart repository at your Github repository
 
-If there is someone who does not know anything about <br>
-helm charts there is a simple deployment available <br>
-Dummy Dokuwiki deployment by using helm chart
+```bash
+git clone https://github.com/xjantoth/microservice.git
+cd microservice
+mkdir -p docs/charts/
+cd helm-charts
+helm package micro-backend
+helm package micro-frontend
+cp ../micro-backend-0.1.0.tgz docs/charts/
+cp ../micro-frontend-0.1.0.tgz docs/charts/
+helm repo index .
+git add docs/charts/
+git commit -m "Creating helm chart repository"
+git push 
+```
+
+![](images/github-pages.png)
+
+```bash
+helm repo add course https://xjantoth.github.io/microservice/charts
+helm search course/
+
+
+# Add one more dummy helm chart
+cd microservice/docs/charts
+helm create course
+helm package course
+helm repo index .
+git add .
+git commit -m "Adding course-..-.tgz helm chart to my Github repo."
+git push
+
+# Go to my master k8s server
+helm repo update
+helm search course/
+```
+## Deploy micro-backend and micro-frontend helm chart from Github
 
 ```bash
 helm install \
---name dw \
---set service.type=NodePort \
---set service.nodePorts.http=30111 \
---set persistence.enabled=false \
---set dokuwikiUsername=admin,dokuwikiPassword=password \
-stable/dokuwiki \
+--name frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+course/micro-frontend \
+--tls
+
+helm install \
+--name backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+course/micro-backend \
+--tls
+```
+
+
+
+## Create helm chart repository based on Chartmuseum helm chart
+
+```bash
+helm install \
+--name chartmuseum \
+--set persistence.pv.enabled=false \
+--set env.open.DISABLE_API=false \
+--set env.open.CONTEXT_PATH="/chartmuseum" \
+--set ingress.enabled=true \
+--set ingress.hosts[0].name="k8s.linuxinuse.com" \
+--set ingress.hosts[0].path="/chartmuseum" \
+stable/chartmuseum \
+--tls \
+--dry-run \
+--debug
+
+# Upgrade your deployment with basic auth
+helm upgrade \
+chartmuseum \
+--set persistence.pv.enabled=false \
+--set env.open.DISABLE_API=false \
+--set env.open.CONTEXT_PATH="/chartmuseum" \
+--set ingress.enabled=true \
+--set ingress.hosts[0].name="k8s.linuxinuse.com" \
+--set ingress.hosts[0].path="/chartmuseum" \
+--set env.secret.BASIC_AUTH_USER="user" \
+--set env.secret.BASIC_AUTH_PASS="Start123#" \
+stable/chartmuseum \
+--tls \
+--dry-run \
+--debug
+
+helm repo add k8s http://k8s.linuxinuse.com:30444/chartmuseum --username user --password Start123#
+
+
+# helm repo add rook-master https://charts.rook.io/master
+# helm install --namespace rook-ceph --name rook-ceph  --set hostpathRequiresPrivileged=true rook-master/rook-ceph  --tls
+# kubectl create -f cluster-test.yaml
+# kubectl create -f  storageclass.yaml
+
+
+
+# Add a new helm chart repository to your list
+helm repo list
+helm repo add chartmuseum http://k8s.linuxinuse.com:30444/chartmuseum
+helm repo update
+helm search chartmuseum/
+
+# Package your helm charts
+helm package micro-backend
+helm package micro-frontend
+
+ 
+# Push helm chart to Chartmuseum
+curl --data-binary "@micro-backend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+{"saved":true}
+curl --data-binary "@micro-frontend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+{"saved":true}
+
+# Verify that your chart was saved in Chartmuseum
+helm search chartmuseum/
+NAME                            CHART VERSION   APP VERSION     DESCRIPTION             
+chartmuseum/micro-backend       0.1.0           1.0             Backend Python Flask app
+
+helm fetch chartmuseum/micro-backend
+
+# Delete Chartmuseum deployment 
+ helm delete chartmuseum --tls --purge
+```
+
+## Deploy micro-backend and micro-frontend helm chart from Chartmuseum
+
+```bash
+helm install \
+--name frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+chartmuseum/micro-frontend \
+--tls
+
+helm install \
+--name backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+chartmuseum/micro-backend \
 --tls
 ```
 
@@ -315,4 +567,5 @@ available.
 
 ```bash
 find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {} +
+
 ```

@@ -29,7 +29,6 @@ htmlcov/
 node_modules/
 build
 .DS_Store
-*.tgz
 my-app*
 template/src/__tests__/__snapshots__/
 lerna-debug.log
@@ -39,4 +38,4 @@ yarn-error.log*
 /.changelog
 .npm/
 postgres/data
-helm-charts/micro-demo/
+
