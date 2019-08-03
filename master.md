@@ -13,7 +13,7 @@ ssh-keygen -t rsa -b 2048 -f ~/.ssh/devops -C "devops@devops.com"
 
 ```bash
 # *****************************************
-# SSH to you Kubenretes master server
+# SSH to you Kubernetes master server
 # *****************************************
 ssh <user>@<ip-address>
 ```
