@@ -1,20 +1,22 @@
 # Table of contents
-- [Table of contents](#Table-of-contents)
-  - [Run PostgreSQL database locally as docker container <a name="database"></a>](#Run-PostgreSQL-database-locally-as-docker-container-a-name%22database%22a)
-  - [Backend - Python Flask <a name="backend"></a>](#Backend---Python-Flask-a-name%22backend%22a)
-      - [Overview of backend env. variables <a name="env-variables"></a>](#Overview-of-backend-env-variables-a-name%22env-variables%22a)
-      - [Run backend locally <a name="run-backend-locally"></a>](#Run-backend-locally-a-name%22run-backend-locally%22a)
-      - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#Run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
-      - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#Backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
-      - [Render templates files](#Render-templates-files)
-  - [Frontend - React app <a name="frontend"></a>](#Frontend---React-app-a-name%22frontend%22a)
-      - [Run frontend locally <a name="run-frontend-locally"></a>](#Run-frontend-locally-a-name%22run-frontend-locally%22a)
-      - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#Run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
-      - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#Frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
-  - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#Nginx-Controller-Proxy-a-name%22nginx-controller-proxy%22a)
-  - [Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>](#Getting-started-with-a-helm-chart-deployment-a-name%22dummy-helm-chart-deployment%22a)
-  - [Troubleshooting section <a name="troubleshooting"></a>](#Troubleshooting-section-a-name%22troubleshooting%22a)
-    - [If helm chart has to be renamed from foo to bar](#If-helm-chart-has-to-be-renamed-from-foo-to-bar)
+- [Table of contents](#table-of-contents)
+  - [Run PostgreSQL database locally as docker container <a name="database"></a>](#run-postgresql-database-locally-as-docker-container-a-name%22database%22a)
+  - [Backend - Python Flask <a name="backend"></a>](#backend---python-flask-a-name%22backend%22a)
+      - [Overview of backend env. variables <a name="env-variables"></a>](#overview-of-backend-env-variables-a-name%22env-variables%22a)
+      - [Run backend locally <a name="run-backend-locally"></a>](#run-backend-locally-a-name%22run-backend-locally%22a)
+      - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
+      - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
+      - [Get inside busybox and call your flask instance](#get-inside-busybox-and-call-your-flask-instance)
+      - [Get inside python instance POD and call your flask instance](#get-inside-python-instance-pod-and-call-your-flask-instance)
+      - [Render templates files](#render-templates-files)
+  - [Frontend - React app <a name="frontend"></a>](#frontend---react-app-a-name%22frontend%22a)
+      - [Run frontend locally <a name="run-frontend-locally"></a>](#run-frontend-locally-a-name%22run-frontend-locally%22a)
+      - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
+      - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
+  - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
+  - [Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>](#getting-started-with-a-helm-chart-deployment-a-name%22dummy-helm-chart-deployment%22a)
+  - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
+    - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
 
 ## Run PostgreSQL database locally as docker container <a name="database"></a>
@@ -159,6 +161,36 @@ Verify your backend deployment via:
 
 ```bash
 curl http://<ip_address>:30222/api/saveip
+```
+
+#### Get inside busybox and call your flask instance
+
+```bash
+# get inside your busybox
+kubectl exec -it busybox -- sh
+
+uname -n
+ip a
+wget -O - http://backend-micro-backend:80/api/isalive
+wget -O - http://backend-micro-backend:80/api/getallips
+wget -O - http://backend-micro-backend:80/api/saveip
+wget -O - http://backend-micro-backend:80/api/getallips
+```
+
+#### Get inside python instance POD and call your flask instance
+
+```bash
+kubectl exec -it backend-micro-backend-7d887bb858-sd9hb -- sh
+
+ps -ef 
+PID   USER     TIME  COMMAND
+1  root       7:08 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8000
+8  root      18:42 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8000
+23 root      0:00 sh
+
+wget -O - http://127.0.0.1:8000/api/isalive
+wget -O - http://127.0.0.1:8000/api/saveip
+wget -O - http://127.0.0.1:8000/api/getallips
 ```
 
 #### Render templates files

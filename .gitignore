@@ -39,4 +39,6 @@ yarn-error.log*
 /.changelog
 .npm/
 postgres/data
-helm-charts/micro-demo/
+helm-charts/micro-demo/*
+helm-charts/micro-xyz/*
+
