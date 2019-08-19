@@ -17,6 +17,7 @@
       - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
       - [Scale up/down your front-end app deployment](#scale-updown-your-front-end-app-deployment)
   - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
+  - [Create helm chart repository at your github](#create-helm-chart-repository-at-your-github)
   - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
     - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
@@ -376,6 +377,29 @@ $(kubectl get pods | grep "nginx-ingress-controller" | awk -F" " '{print $1}')\
 
 # Delete nginx ingress controller
 helm delete --purge ingress --tls
+```
+
+## Create helm chart repository at your github 
+
+```bash
+git clone https://github.com/xjantoth/microservice.git
+cd microservice
+mkdir -p docs/charts/
+cd helm-charts
+helm package micro-backend
+helm package micro-frontend
+cp ../micro-backend-0.1.0.tgz docs/charts/
+cp ../micro-frontend-0.1.0.tgz docs/charts/
+git add docs/charts/
+git commit -m "Creating helm chart repository"
+git push 
+```
+
+![](images/github-pages.png)
+
+```bash
+helm repo add course https://xjantoth.github.io/microservice/charts
+helm search course/
 ```
 
 
