@@ -18,6 +18,7 @@
       - [Scale up/down your front-end app deployment](#scale-updown-your-front-end-app-deployment)
   - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
   - [Create helm chart repository at your github](#create-helm-chart-repository-at-your-github)
+  - [Create helm chart repository based on Chartmuseum helm chart](#create-helm-chart-repository-based-on-chartmuseum-helm-chart)
   - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
     - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
@@ -400,6 +401,37 @@ git push
 ```bash
 helm repo add course https://xjantoth.github.io/microservice/charts
 helm search course/
+```
+
+## Create helm chart repository based on Chartmuseum helm chart
+
+```bash
+helm install \
+--name chartmuseum \
+--set persistence.pv.enabled=false \
+--set env.open.DISABLE_API=false \
+--set env.open.CONTEXT_PATH="/chartmuseum" \
+--set ingress.enabled=true \
+--set ingress.hosts[0].name="k8s.linuxinuse.com" \
+--set ingress.hosts[0].path="/chartmuseum" \
+stable/chartmuseum \
+--tls \
+--dry-run \
+--debug
+
+
+# Push helm chart to Chartmuseum
+helm package micro-backend
+curl --data-binary "@micro-backend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+{"saved":true}
+
+# Verify that your chart was saved in Chartmuseum
+[root@k8s-master helm-charts]# helm search chartmuseum/
+NAME                            CHART VERSION   APP VERSION     DESCRIPTION             
+chartmuseum/micro-backend       0.1.0           1.0             Backend Python Flask app
+
+# Delete Chartmuseum deployment 
+ helm delete chartmuseum --tls --purge
 ```
 
 
