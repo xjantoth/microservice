@@ -419,16 +419,29 @@ stable/chartmuseum \
 --dry-run \
 --debug
 
+# Add a new helm chart repository to your list
+helm repo list
+helm repo add chartmuseum http://k8s.linuxinuse.com:30444/chartmuseum
+helm repo update
+helm search chartmuseum/
 
-# Push helm chart to Chartmuseum
+# Package your helm charts
 helm package micro-backend
+helm package micro-frontend
+
+ 
+# Push helm chart to Chartmuseum
 curl --data-binary "@micro-backend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+{"saved":true}
+curl --data-binary "@micro-frontend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
 {"saved":true}
 
 # Verify that your chart was saved in Chartmuseum
-[root@k8s-master helm-charts]# helm search chartmuseum/
+helm search chartmuseum/
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION             
 chartmuseum/micro-backend       0.1.0           1.0             Backend Python Flask app
+
+helm fetch chartmuseum/micro-backend
 
 # Delete Chartmuseum deployment 
  helm delete chartmuseum --tls --purge
