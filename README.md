@@ -419,6 +419,26 @@ stable/chartmuseum \
 --dry-run \
 --debug
 
+# Upgrade your deployment with basic auth
+helm upgrade \
+chartmuseum \
+--set persistence.pv.enabled=false \
+--set env.open.DISABLE_API=false \
+--set env.open.CONTEXT_PATH="/chartmuseum" \
+--set ingress.enabled=true \
+--set ingress.hosts[0].name="k8s.linuxinuse.com" \
+--set ingress.hosts[0].path="/chartmuseum" \
+--set env.secret.BASIC_AUTH_USER="user" \
+--set env.secret.BASIC_AUTH_PASS="Start123#" \
+stable/chartmuseum \
+--tls \
+--dry-run \
+--debug
+
+helm repo add k8s http://k8s.linuxinuse.com:30444/chartmuseum --username user --password Start123#
+
+
+
 # Add a new helm chart repository to your list
 helm repo list
 helm repo add chartmuseum http://k8s.linuxinuse.com:30444/chartmuseum
