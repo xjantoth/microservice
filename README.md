@@ -19,6 +19,7 @@
   - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
   - [Create helm chart repository at your github](#create-helm-chart-repository-at-your-github)
   - [Create helm chart repository based on Chartmuseum helm chart](#create-helm-chart-repository-based-on-chartmuseum-helm-chart)
+  - [Deploy micro-backend and micro-frontend helm chart from Chartmuseum](#deploy-micro-backend-and-micro-frontend-helm-chart-from-chartmuseum)
   - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
     - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
@@ -391,6 +392,7 @@ helm package micro-backend
 helm package micro-frontend
 cp ../micro-backend-0.1.0.tgz docs/charts/
 cp ../micro-frontend-0.1.0.tgz docs/charts/
+helm repo index .
 git add docs/charts/
 git commit -m "Creating helm chart repository"
 git push 
@@ -438,6 +440,12 @@ stable/chartmuseum \
 helm repo add k8s http://k8s.linuxinuse.com:30444/chartmuseum --username user --password Start123#
 
 
+# helm repo add rook-master https://charts.rook.io/master
+# helm install --namespace rook-ceph --name rook-ceph  --set hostpathRequiresPrivileged=true rook-master/rook-ceph  --tls
+# kubectl create -f cluster-test.yaml
+# kubectl create -f  storageclass.yaml
+
+
 
 # Add a new helm chart repository to your list
 helm repo list
@@ -467,6 +475,23 @@ helm fetch chartmuseum/micro-backend
  helm delete chartmuseum --tls --purge
 ```
 
+## Deploy micro-backend and micro-frontend helm chart from Chartmuseum
+
+```bash
+helm install \
+--name frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+chartmuseum/micro-frontend \
+--tls
+
+helm install \
+--name backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+chartmuseum/micro-backend \
+--tls
+```
 
 ## Troubleshooting section <a name="troubleshooting"></a>
 
