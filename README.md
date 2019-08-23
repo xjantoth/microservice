@@ -567,4 +567,5 @@ available.
 
 ```bash
 find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {} +
+
 ```
