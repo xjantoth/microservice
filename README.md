@@ -17,7 +17,8 @@
       - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
       - [Scale up/down your front-end app deployment](#scale-updown-your-front-end-app-deployment)
   - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
-  - [Create helm chart repository at your github](#create-helm-chart-repository-at-your-github)
+  - [Create helm chart repository at your Github repository](#create-helm-chart-repository-at-your-github-repository)
+  - [Deploy micro-backend and micro-frontend helm chart from Github](#deploy-micro-backend-and-micro-frontend-helm-chart-from-github)
   - [Create helm chart repository based on Chartmuseum helm chart](#create-helm-chart-repository-based-on-chartmuseum-helm-chart)
   - [Deploy micro-backend and micro-frontend helm chart from Chartmuseum](#deploy-micro-backend-and-micro-frontend-helm-chart-from-chartmuseum)
   - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
@@ -381,7 +382,7 @@ $(kubectl get pods | grep "nginx-ingress-controller" | awk -F" " '{print $1}')\
 helm delete --purge ingress --tls
 ```
 
-## Create helm chart repository at your github 
+## Create helm chart repository at your Github repository
 
 ```bash
 git clone https://github.com/xjantoth/microservice.git
@@ -403,7 +404,40 @@ git push
 ```bash
 helm repo add course https://xjantoth.github.io/microservice/charts
 helm search course/
+
+
+# Add one more dummy helm chart
+cd microservice/docs/charts
+helm create course
+helm package course
+helm repo index .
+git add .
+git commit -m "Adding course-..-.tgz helm chart to my Github repo."
+git push
+
+# Go to my master k8s server
+helm repo update
+helm search course/
 ```
+## Deploy micro-backend and micro-frontend helm chart from Github
+
+```bash
+helm install \
+--name frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+course/micro-frontend \
+--tls
+
+helm install \
+--name backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+course/micro-backend \
+--tls
+```
+
+
 
 ## Create helm chart repository based on Chartmuseum helm chart
 
