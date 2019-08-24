@@ -62,6 +62,8 @@ firewall-cmd --permanent --add-port=6784/udp
 firewall-cmd --permanent --direct --add-rule ipv4 filter FORWARD 0 -j ACCEPT
 # firewall-cmd --add-masquerade --permanent
 firewall-cmd --reload
+
+firewall-cmd --zone=public --list-all
 ```
 
 #### Setup bridge interface
