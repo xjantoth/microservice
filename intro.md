@@ -1,5 +1,11 @@
 # Welcome to this course
 
+# Main Goals
+
+- Learn how to setup Kubenretes cluster (on-premise)
+- Write helm charts from scratch (with dependencies)
+- Deployment to Kubernetes cluster
+
 ## Introduction
 
 - **Setup Single Master Kubernetes (On-premise)**
