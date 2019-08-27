@@ -31,7 +31,7 @@
   - push to "https://hub.docker.com"
   - run docker container locally
 
-- **Front-end Flask app**
+- **Front-end React app**
   - explain React frontend app
   - run React frontend app locally
   - docerize React frontend app
