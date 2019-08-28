@@ -2,7 +2,7 @@
 
 # Main Goals
 
-- Learn how to setup Kubenretes cluster (on-premise)
+- Learn how to setup Kubernetes cluster (on-premise)
 - Write helm charts from scratch (with dependencies)
 - Deployment to Kubernetes cluster
 
@@ -60,7 +60,7 @@
 
 - **Setup your own helm chart repository**
   - own private helm chart repository by using Chartmuseum 
-  - chartmuseum - deployment micro-frontend && micro-backend
+  - Chartmuseum - deployment micro-frontend && micro-backend
   - chart repository made out of Github repository
-  - github helm repo - deployment micro-frontend && micro-backend
+  - Github helm repo - deployment micro-frontend && micro-backend
 
