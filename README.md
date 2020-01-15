@@ -156,7 +156,12 @@ cp postgresql*.tgz charts/
 
 ```bash
 # Before the very first deployment 
+cd helm-charts/micro-backend 
 helm dependency update
+cd charts/
+tar -xvzf postgresql-3.18.3.tgz
+rm postgresql-3.18.3.tgz -rf && cd ..
+sed -i 's/apiVersion: apps\/v1beta2/apiVersion: apps\/v1/g' charts/postgresql/templates/statefulset.yaml charts/postgresql/templates/statefulset-slaves.yaml
 
 # Deploy backend helm chart
 helm install \
