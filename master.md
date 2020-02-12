@@ -111,6 +111,10 @@ EOF
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 ```
 
+# Enable/Start kubelet service
+```bash
+systemctl enable kubelet && systemctl start kubelet
+```
 
 #### Start/Initiate Kubernetes Master
 
