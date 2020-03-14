@@ -216,7 +216,12 @@ $(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
 helm upgrade backend helm-charts/micro-backend --tls
 
 # Update already deployed helm chart with helm v3
-helm3 upgrade backend helm-charts/micro-backend
+helm3 upgrade backend \
+--set replicaCount=4 \
+--set service.type=NodePort  \
+--set service.nodePort=30222 \
+helm-charts/micro-backend 
+
 
 
 # Delete helm chart deployment with helm v2
