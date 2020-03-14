@@ -216,14 +216,14 @@ $(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
 helm upgrade backend helm-charts/micro-backend --tls
 
 # Update already deployed helm chart with helm v3
-helm upgrade backend helm-charts/micro-backend
+helm3 upgrade backend helm-charts/micro-backend
 
 
 # Delete helm chart deployment with helm v2
 helm delete --purge backend --tls
 
 # Delete helm chart deployment with helm v3
-helm delete backend 
+helm3 delete backend 
 
 ```
 
