@@ -56,6 +56,7 @@ helm charts there is a simple deployment available <br>
 Dummy Dokuwiki deployment by using helm chart
 
 ```bash
+# Deploy Dokuwiki with helm v2
 helm install \
 --name dw \
 --set service.type=NodePort \
@@ -64,6 +65,15 @@ helm install \
 --set dokuwikiUsername=admin,dokuwikiPassword=password \
 stable/dokuwiki \
 --tls
+
+# Deploy Dokuwiki with helm v3
+helm3 install \
+dw \
+--set service.type=NodePort \
+--set service.nodePorts.http=30111 \
+--set persistence.enabled=false \
+--set dokuwikiUsername=admin,dokuwikiPassword=password \
+stable/dokuwiki \
 ```
 
 
@@ -125,6 +135,21 @@ docker login
 docker push <account>/microservice:v0.0.1
 ```
 
+#### Install helm v3
+
+```bash
+function install_helm3 () {
+  mkdir /tmp/helm3_unpacked
+  curl --output /tmp/helm3.tgz -L https://get.helm.sh/helm-v3.1.1-linux-amd64.tar.gz
+  tar -xvf /tmp/helm3.tgz  -C /tmp/helm3_unpacked
+  cp /tmp/helm3_unpacked/linux-amd64/helm /usr/bin/helm3
+  chmod +x /usr/bin/helm3
+  helm3
+}
+
+install_helm3
+```
+
 
 #### Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>
 
@@ -163,13 +188,21 @@ tar -xvzf postgresql-3.18.3.tgz
 rm postgresql-3.18.3.tgz -rf && cd ..
 sed -i 's/apiVersion: apps\/v1beta2/apiVersion: apps\/v1/g' charts/postgresql/templates/statefulset.yaml charts/postgresql/templates/statefulset-slaves.yaml
 
-# Deploy backend helm chart
+# Deploy backend helm chart with helm v2
 helm install \
 --name backend \
 --set service.type=NodePort \
 --set service.nodePort=30222 \
 helm-charts/micro-backend \
 --tls
+
+# Deploy backend helm chart with helm v3
+helm3 install \
+backend \
+--set service.type=NodePort \
+--set service.nodePort=30222 \
+helm-charts/micro-backend 
+
 
 # Describe backend pod
 kubectl describe pod \
@@ -179,11 +212,19 @@ $(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
 kubectl logs -f \
 $(kubectl get pods | grep backend-micro-backend | awk -F" " {'print $1'})
 
-# Update already deployed helm chart
+# Update already deployed helm chart with helm v2
 helm upgrade backend helm-charts/micro-backend --tls
 
-# Delete helm chart deployment 
+# Update already deployed helm chart with helm v3
+helm upgrade backend helm-charts/micro-backend
+
+
+# Delete helm chart deployment with helm v2
 helm delete --purge backend --tls
+
+# Delete helm chart deployment with helm v3
+helm delete backend 
+
 ```
 
 Verify your backend deployment via:
@@ -235,23 +276,36 @@ $(kubectl get svc | grep micro-backend | awk -F" " '{print $1}')
 # Check number of micro-backend pods
 kubectl get pods -o wide| grep micro-backend
 
-# Scale up your back-end deployment to rs=3
+# Scale up your back-end deployment to rs=3 with helm v2
 helm upgrade backend \
 --set replicaCount=3 \
 --set service.nodePort= \
 helm-charts/micro-backend \
 --tls
 
-
+# Scale up your back-end deployment to rs=3 with helm v3
+helm3 upgrade backend \
+--set replicaCount=3 \
+--set service.nodePort= \
+helm-charts/micro-backend 
 ```
 
 #### Render templates files
 
 ```bash
+# If want to see how supplied values will be rendered before deployment
+# with helm v2
 /opt/microservice
 helm template -x templates/service.yaml helm-charts/micro-backend
 helm template -x templates/ingress.yaml helm-charts/micro-backend 
 helm template -x templates/deployment.yaml helm-charts/micro-backend
+
+# If want to see how supplied values will be rendered before deployment
+# with helm v3
+/opt/microservice
+helm3 template -x templates/service.yaml helm-charts/micro-backend
+helm3 template -x templates/ingress.yaml helm-charts/micro-backend 
+helm3 template -x templates/deployment.yaml helm-charts/micro-backend
 ```
 
 ## Frontend - React app <a name="frontend"></a>
@@ -292,13 +346,23 @@ docker push <account>/frontend:v0.0.3
 If want to quickly expose frontend app as service type NodePort<br>
 to be able to access it immediately - please use following command:
 
+
 ```bash
+# Install frontend helm chart with helm v2
 helm install \
 --name frontend \
 --set service.type=NodePort \
 --set service.nodePort=30333 \
 helm-charts/micro-frontend \
 --tls
+
+# Install frontend helm chart with helm v3
+helm3 install \
+frontend \
+--set service.type=NodePort \
+--set service.nodePort=30333 \
+helm-charts/micro-frontend 
+
 
 # Describe frontend pod
 kubectl describe pod \
@@ -307,11 +371,17 @@ $(kubectl get pods | grep frontend-micro-frontend | awk -F" " {'print $1'})
 # See frontend pod logs fron docker container
 kubectl logs -f $(kubectl get pods | grep frontend-micro-frontend | awk -F" " {'print $1'})
 
-# Update already deployed helm chart
+# Update already deployed helm chart with helm v2
 helm upgrade frontend helm-charts/micro-backend --tls
 
-# Delete helm chart deployment 
+# Update already deployed helm chart with helm v3
+helm3 upgrade frontend helm-charts/micro-backend 
+
+# Delete helm chart deployment helm v2
 helm delete --purge frontend --tls
+
+# Delete helm chart deployment helm v3
+helm3 delete frontend 
 ```
 
 Verify your frontend deployment via:
@@ -332,12 +402,18 @@ $(kubectl get svc | grep micro-frontend | awk -F" " '{print $1}')
 # Check number of micro-frontend pods
 kubectl get pods -o wide| grep micro-frontend
 
-# Scale up your front-end deployment to rs=2
+# Scale up your front-end deployment to rs=2 helm v2
 helm upgrade frontend \
 --set replicaCount=2 \
 --set service.nodePort= \
 helm-charts/micro-frontend \
 --tls
+
+# Scale up your front-end deployment to rs=2 helm v3
+helm3 upgrade frontend \
+--set replicaCount=2 \
+--set service.nodePort= \
+helm-charts/micro-frontend 
 ```
 
 
@@ -353,27 +429,46 @@ use following deployment:
 
 ```bash
 
-# Remove NodePort from backend deployment
+# Remove NodePort from backend deployment helm v2
 helm upgrade backend \
 --set service.type=ClusterIP \
 --set service.nodePort= \
 helm-charts/micro-backend \
 --tls
 
-# Remove NodePort from frontend deployment
+# Remove NodePort from backend deployment helm v3
+helm3 upgrade backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+helm-charts/micro-backend 
+
+# Remove NodePort from frontend deployment helm v2
 helm upgrade frontend \
 --set service.type=ClusterIP \
 --set service.nodePort= \
 helm-charts/micro-frontend \
 --tls
 
-# nginx-ingress deployment
+# Remove NodePort from frontend deployment helm v3
+helm3 upgrade frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+helm-charts/micro-frontend 
+
+# nginx-ingress deployment helm v2
 helm install \
 --name ingress \
 --set controller.service.type=NodePort \
 --set controller.service.nodePorts.http=30444 \
 stable/nginx-ingress \
 --tls
+
+# nginx-ingress deployment helm v3
+helm3 install \
+ingress \
+--set controller.service.type=NodePort \
+--set controller.service.nodePorts.http=30444 \
+stable/nginx-ingress 
 
 # Explore nginx-ingress configuration
 kubectl \
@@ -383,8 +478,11 @@ $(kubectl get pods | grep "nginx-ingress-controller" | awk -F" " '{print $1}')\
  -- cat /etc/nginx/nginx.conf > \
  /tmp/nginx-controller.conf
 
-# Delete nginx ingress controller
+# Delete nginx ingress controller helm v2
 helm delete --purge ingress --tls
+
+# Delete nginx ingress controller helm v3
+helm3 delete ingress 
 ```
 
 ## Create helm chart repository at your Github repository
