@@ -403,7 +403,7 @@ helm3 delete frontend
 Verify your frontend deployment via:
 
 ```bash
-curl http://<ip_address>:30333/api/apps/
+curl http://<ip_address>:30333/app/
 ```
 
 #### Scale up/down your front-end app deployment
