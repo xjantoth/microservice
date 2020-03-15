@@ -372,6 +372,13 @@ helm install \
 helm-charts/micro-frontend \
 --tls
 
+# Deploy micro-backend (in 4 replicas) helm chart with helm v3 together with micro-frontend
+helm3 upgrade backend \
+--set replicaCount=4 \
+--set service.type=NodePort  \
+--set service.nodePort=30222 \
+helm-charts/micro-backend 
+
 # Install frontend helm chart with helm v3
 helm3 install \
 frontend \
