@@ -148,6 +148,13 @@ function install_helm3 () {
 }
 
 install_helm3
+
+# In case you have no helm chart repository added
+helm3 repo \
+add stable https://kubernetes-charts.storage.googleapis.com/
+
+# Verify your helm chart repository repo helm v3
+helm3 repo list
 ```
 
 
@@ -182,7 +189,11 @@ cp postgresql*.tgz charts/
 ```bash
 # Before the very first deployment 
 cd helm-charts/micro-backend 
+# For helm v2
 helm dependency update
+# For helm v3
+helm3 dependency update
+
 cd charts/
 tar -xvzf postgresql-3.18.3.tgz
 rm postgresql-3.18.3.tgz -rf && cd ..
@@ -392,7 +403,7 @@ helm3 delete frontend
 Verify your frontend deployment via:
 
 ```bash
-curl http://<ip_address>:30333/api/saveip
+curl http://<ip_address>:30333/api/apps/
 ```
 
 #### Scale up/down your front-end app deployment
@@ -467,6 +478,38 @@ helm install \
 --set controller.service.nodePorts.http=30444 \
 stable/nginx-ingress \
 --tls
+
+# In case you have no helm chart repository added
+helm3 repo \
+add stable https://kubernetes-charts.storage.googleapis.com/
+
+# Verify your helm chart repository repo helm v3
+helm3 repo list
+
+
+# !!! Consideration 
+dig k8s.<servername>.com
+---
+;; <<>> DiG 9.11.4-P2-RedHat-9.11.4-9.P2.el7 <<>> k8s.<servername>.com
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64244
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;k8s.<servername>.com.            IN      A
+
+;; ANSWER SECTION:
+k8s.<servername>.com.     53      IN      A       1.2.3.4
+
+;; Query time: 11 msec
+;; SERVER: 10.1.94.8#53(10.1.94.8)
+;; ...
+;; MSG SIZE  rcvd: 63
+---
+
 
 # nginx-ingress deployment helm v3
 helm3 install \
