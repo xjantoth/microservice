@@ -579,12 +579,13 @@ git commit -m "Creating helm v3 chart repository docs/hc-v3-repo"
 git push 
 
 helm3 repo add hc-v3-repo https://xjantoth.github.io/microservice/hc-v3-repo
+helm3 repo update
 helm3 repo list
 helm3 search repo hc-v3-repo/
 ```
 
 
-# Add one more dummy helm chart
+## Add one more dummy helm chart
 ```bash
 cd microservice/docs/charts
 helm create course
@@ -598,7 +599,7 @@ git push
 helm repo update
 helm search course/
 ```
-## Deploy micro-backend and micro-frontend helm chart from Github
+## Deploy (Helm v2) micro-backend and micro-frontend helm chart from Github
 
 ```bash
 helm install \
@@ -616,7 +617,37 @@ course/micro-backend \
 --tls
 ```
 
+## Deploy (Helm v3) micro-backend and micro-frontend helm chart from Github
 
+```bash
+helm3 repo add hc-v3-repo https://xjantoth.github.io/microservice/hc-v3-repo
+helm3 repo update
+
+helm3 install \
+frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+hc-v3-repo/micro-frontend
+
+helm3 install \
+backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+hc-v3-repo/micro-backend 
+
+# In case you have no helm chart repository added
+helm3 repo \
+add stable https://kubernetes-charts.storage.googleapis.com/
+
+# nginx-ingress deployment helm v3
+helm3 install \
+ingress \
+--set controller.service.type=NodePort \
+--set controller.service.nodePorts.http=30444 \
+stable/nginx-ingress 
+
+
+```
 
 ## Create helm chart repository based on Chartmuseum helm chart
 
