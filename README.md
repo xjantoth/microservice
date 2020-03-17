@@ -540,7 +540,7 @@ helm delete --purge ingress --tls
 helm3 delete ingress 
 ```
 
-## Create helm chart repository at your Github repository
+## Create (helm v2) helm chart repository at your Github repository
 
 ```bash
 git clone https://github.com/xjantoth/microservice.git
@@ -556,15 +556,36 @@ git add docs/charts/
 git commit -m "Creating helm chart repository"
 git push 
 ```
-
 ![](images/github-pages.png)
 
 ```bash
 helm repo add course https://xjantoth.github.io/microservice/charts
 helm search course/
+```
+
+## Create (helm v3) helm chart repository at your Github repository
+
+```bash
+git clone https://github.com/xjantoth/microservice.git
+cd microservice
+
+mkdir -p docs/hc-v3-repo
+helm3 package helm-charts/micro-backend --destination docs/hc-v3-repo
+helm3 package helm-charts/micro-frontend --destination docs/hc-v3-repo
+helm3 repo index docs/hc-v3-repo
+
+git add docs/hc-v3-repo
+git commit -m "Creating helm v3 chart repository docs/hc-v3-repo"
+git push 
+
+helm3 repo add hc-v3-repo https://xjantoth.github.io/microservice/hc-v3-repo
+helm3 repo list
+helm3 search repo hc-v3-repo/
+```
 
 
 # Add one more dummy helm chart
+```bash
 cd microservice/docs/charts
 helm create course
 helm package course
