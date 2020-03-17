@@ -3,13 +3,13 @@ entries:
   micro-backend:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2020-03-17T19:48:23.197072469Z"
+    created: "2020-03-17T21:51:31.020419707+01:00"
     dependencies:
     - name: postgresql
       repository: https://kubernetes-charts.storage.googleapis.com
       version: 3.18.3
     description: Backend Python Flask app
-    digest: 0d806ec5484f9984555dc0e96e73209ac0e75e95f884ae4cb1d151918d5524d9
+    digest: af7ea5c0c94a52030bf65cdbb10a185038a46e29e75c03ae9eaa08fb6d8e9482
     name: micro-backend
     urls:
     - micro-backend-0.1.0.tgz
@@ -17,12 +17,11 @@ entries:
   micro-frontend:
   - apiVersion: v1
     appVersion: "1.0"
-    created: "2020-03-17T19:48:23.198102352Z"
+    created: "2020-03-17T21:51:31.020839865+01:00"
     description: A Helm chart for Kubernetes
-    digest: 246b3262443d5dab6028ec62d0b63a66b309e453086b116f2ec3baa3bc35f466
+    digest: da532b65504c1c670393bdee6aa2328a5fec40d128804c2ab76488af44f59c08
     name: micro-frontend
     urls:
     - micro-frontend-0.1.0.tgz
     version: 0.1.0
-generated: "2020-03-17T19:48:23.184279364Z"
-
+generated: "2020-03-17T21:51:31.017106676+01:00"
