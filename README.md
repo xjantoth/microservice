@@ -631,6 +631,7 @@ hc-v3-repo/micro-frontend
 
 helm3 install \
 backend \
+--set replicaCount=4 \
 --set service.type=ClusterIP \
 --set service.nodePort= \
 hc-v3-repo/micro-backend 
@@ -645,8 +646,6 @@ ingress \
 --set controller.service.type=NodePort \
 --set controller.service.nodePorts.http=30444 \
 stable/nginx-ingress 
-
-
 ```
 
 ## Create helm chart repository based on Chartmuseum helm chart
