@@ -621,6 +621,10 @@ course/micro-backend \
 
 ```bash
 helm3 repo add hc-v3-repo https://xjantoth.github.io/microservice/hc-v3-repo
+
+# In case you have no helm chart repository added
+helm3 repo \
+add stable https://kubernetes-charts.storage.googleapis.com/
 helm3 repo update
 
 helm3 install \
@@ -635,10 +639,6 @@ backend \
 --set service.type=ClusterIP \
 --set service.nodePort= \
 hc-v3-repo/micro-backend 
-
-# In case you have no helm chart repository added
-helm3 repo \
-add stable https://kubernetes-charts.storage.googleapis.com/
 
 # nginx-ingress deployment helm v3
 helm3 install \
