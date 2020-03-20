@@ -620,6 +620,7 @@ course/micro-backend \
 ## Deploy (Helm v3) micro-backend and micro-frontend helm chart from Github
 
 ```bash
+# Add hc-v3-repo helm chart repo (Github based)
 helm3 repo add hc-v3-repo https://xjantoth.github.io/microservice/hc-v3-repo
 
 # In case you have no helm chart repository added
@@ -646,11 +647,22 @@ ingress \
 --set controller.service.type=NodePort \
 --set controller.service.nodePorts.http=30444 \
 stable/nginx-ingress 
+
+# Result
+helm3 ls
+NAME    	NAMESPACE	REVISION	UPDATED                                	STATUS  	CHART               	APP VERSION
+backend 	default  	1       	2020-03-17 21:40:20.523605058 +0000 UTC	deployed	micro-backend-0.1.0 	1.0        
+frontend	default  	1       	2020-03-17 21:37:54.086454881 +0000 UTC	deployed	micro-frontend-0.1.0	1.0        
+ingress 	default  	1       	2020-03-17 21:41:23.573504347 +0000 UTC	deployed	nginx-ingress-1.34.1	0.30.0  
+# Delete deployments
+
+helm3 delete <deployment-name>
 ```
 
 ## Create helm chart repository based on Chartmuseum helm chart
 
 ```bash
+# (Helm v2) 
 helm install \
 --name chartmuseum \
 --set persistence.pv.enabled=false \
@@ -664,7 +676,25 @@ stable/chartmuseum \
 --dry-run \
 --debug
 
-# Upgrade your deployment with basic auth
+# (Helm v2) Add a new helm chart repository to your list with no authentication
+helm repo list
+helm repo add chartmuseum http://k8s.linuxinuse.com:30444/chartmuseum
+helm repo update
+helm search chartmuseum/
+
+# (Helm v3) 
+helm3 install \
+chartmuseum \
+--set persistence.pv.enabled=false \
+--set env.open.DISABLE_API=false \
+--set env.open.CONTEXT_PATH="/chartmuseum" \
+--set ingress.enabled=true \
+--set ingress.hosts[0].name="k8s.linuxinuse.com" \
+--set ingress.hosts[0].path="/chartmuseum" \
+stable/chartmuseum 
+
+
+# (Helm v2) Upgrade your deployment with basic auth
 helm upgrade \
 chartmuseum \
 --set persistence.pv.enabled=false \
@@ -680,42 +710,60 @@ stable/chartmuseum \
 --dry-run \
 --debug
 
+# (Helm v3) Upgrade your deployment with basic auth
+helm3 upgrade \
+chartmuseum \
+--set persistence.pv.enabled=false \
+--set env.open.DISABLE_API=false \
+--set env.open.CONTEXT_PATH="/chartmuseum" \
+--set ingress.enabled=true \
+--set ingress.hosts[0].name="k8s.linuxinuse.com" \
+--set ingress.hosts[0].path="/chartmuseum" \
+--set env.secret.BASIC_AUTH_USER="user" \
+--set env.secret.BASIC_AUTH_PASS="Start123#" \
+stable/chartmuseum 
+
+
+# (Helm v2) Add Chartmuseum to the list of available helm chart repsitories with authentication
 helm repo add k8s http://k8s.linuxinuse.com:30444/chartmuseum --username user --password Start123#
 
-
-# helm repo add rook-master https://charts.rook.io/master
-# helm install --namespace rook-ceph --name rook-ceph  --set hostpathRequiresPrivileged=true rook-master/rook-ceph  --tls
-# kubectl create -f cluster-test.yaml
-# kubectl create -f  storageclass.yaml
+# (Helm v3) Add Chartmuseum to the list of available helm chart repsitories
+helm3 repo add k8s http://k8s.linuxinuse.com:30444/chartmuseum --username user --password Start123#
 
 
+# (Helm v2) Package your helm charts
+helm package helm-charts/micro-backend
+helm package helm-charts/micro-frontend
 
-# Add a new helm chart repository to your list
-helm repo list
-helm repo add chartmuseum http://k8s.linuxinuse.com:30444/chartmuseum
-helm repo update
-helm search chartmuseum/
+# (Helm v3) Package your helm charts
+helm3 package helm-charts/micro-backend
+helm3 package helm-charts/micro-frontend
 
-# Package your helm charts
-helm package micro-backend
-helm package micro-frontend
-
- 
-# Push helm chart to Chartmuseum
+# (Helm v2) Push helm chart to Chartmuseum with no authentication
 curl --data-binary "@micro-backend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
 {"saved":true}
 curl --data-binary "@micro-frontend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
 {"saved":true}
 
-# Verify that your chart was saved in Chartmuseum
+# (Helm v2) Verify that your chart was saved in Chartmuseum
 helm search chartmuseum/
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION             
 chartmuseum/micro-backend       0.1.0           1.0             Backend Python Flask app
 
 helm fetch chartmuseum/micro-backend
 
-# Delete Chartmuseum deployment 
- helm delete chartmuseum --tls --purge
+# Delete (Helm v2) Chartmuseum deployment 
+helm delete chartmuseum --tls --purge
+
+# (Helm v3) Push helm chart to Chartmuseum with authentication
+curl -u user --data-binary "@micro-backend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+{"saved":true}
+curl -u user --data-binary "@micro-frontend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+{"saved":true}
+
+# Delete (Helm v3) Chartmuseum deployment 
+helm3 delete chartmuseum 
+
 ```
 
 ## Deploy micro-backend and micro-frontend helm chart from Chartmuseum
@@ -778,3 +826,6 @@ available.
 find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {} +
 
 ```
+
+## USeeful links
+https://forum.kde.org/viewtopic.php?f=270&t=154151
