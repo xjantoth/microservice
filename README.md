@@ -810,7 +810,7 @@ frontend \
 k8s/micro-frontend 
 
 # micro-backend deployment from Chartmuseum helm v3
-helm install \
+helm3 install \
 backend \
 --set service.type=ClusterIP \
 --set service.nodePort= \
