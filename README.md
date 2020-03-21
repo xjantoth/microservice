@@ -815,6 +815,13 @@ backend \
 --set service.type=ClusterIP \
 --set service.nodePort= \
 k8s/micro-backend
+
+# scale up micro-backend to 4 replicas (pods) helm v3
+helm3 upgrade backend \
+--set replicaCount=4 \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+k8s/micro-backend
 ```
 
 ## Troubleshooting section <a name="troubleshooting"></a>
