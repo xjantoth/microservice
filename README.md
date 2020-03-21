@@ -659,7 +659,7 @@ ingress 	default  	1       	2020-03-17 21:41:23.573504347 +0000 UTC	deployed	ngi
 helm3 delete <deployment-name>
 ```
 
-## Create helm chart repository based on Chartmuseum helm chart
+## Create helm chart repository based on Chartmuseum helm chart (Helm v2 & v3)
 
 ```bash
 # (Helm v2) 
@@ -766,9 +766,17 @@ helm3 delete chartmuseum
 
 ```
 
-## Deploy micro-backend and micro-frontend helm chart from Chartmuseum
+## (Helm v2) Deploy micro-backend and micro-frontend helm charts from Chartmuseum 
 
 ```bash
+# nginx-ingress deployment helm v2
+helm install \
+--name ingress \
+--set controller.service.type=NodePort \
+--set controller.service.nodePorts.http=30444 \
+stable/nginx-ingress 
+
+# micro-frontend deployment from Chartmuseum helm v2
 helm install \
 --name frontend \
 --set service.type=ClusterIP \
@@ -776,12 +784,37 @@ helm install \
 chartmuseum/micro-frontend \
 --tls
 
+# micro-backend deployment from Chartmuseum helm v3
 helm install \
 --name backend \
 --set service.type=ClusterIP \
 --set service.nodePort= \
 chartmuseum/micro-backend \
 --tls
+```
+
+## (Helm v3) Deploy micro-backend and micro-frontend helm charts from Chartmuseum
+```bash
+# nginx-ingress deployment helm v3
+helm3 install \
+ingress \
+--set controller.service.type=NodePort \
+--set controller.service.nodePorts.http=30444 \
+stable/nginx-ingress 
+
+# micro-frontend deployment from Chartmuseum helm v3
+helm3 install \
+frontend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+k8s/micro-frontend 
+
+# micro-backend deployment from Chartmuseum helm v3
+helm install \
+backend \
+--set service.type=ClusterIP \
+--set service.nodePort= \
+k8s/micro-backend
 ```
 
 ## Troubleshooting section <a name="troubleshooting"></a>
