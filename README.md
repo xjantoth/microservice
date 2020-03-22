@@ -824,6 +824,108 @@ helm3 upgrade backend \
 k8s/micro-backend
 ```
 
+## Take advantage of helmfile binary
+
+```bash
+function install_helmfile () {
+curl -L --output /usr/bin/helmfile https://github.com/roboll/helmfile/releases/download/v0.104.0/helmfile_linux_amd64
+chmod +x /usr/bin/helmfile
+}
+install_helmfile
+```
+
+#####  Create symbolic link from helm3 -> helm
+```bash
+ln -s /usr/bin/helm3 /usr/bin/helm
+```
+
+##### Explore helmfile template command
+```bash
+# template all helm charts via helmfile using  --selector flag
+helmfile \
+--environment learning \
+--file helmfile.yaml template
+
+# template only micro-backend via helmfile using  --selector flag
+helmfile \
+--selector key=micro-backend  \
+--environment learning \
+--file helmfile.yaml template
+
+# template only micro-frontend via helmfile using  --selector flag
+helmfile \
+--selector key=micro-frontend  \
+--environment learning \
+--file helmfile.yaml template
+
+# template only nginx-ingress via helmfile using  --selector flag
+helmfile \
+--selector key=nginx-ingress  \
+--environment learning \
+--file helmfile.yaml template
+```
+
+##### Deploy micro-{backend,frontend}, nginx-ingress helm chart via helmfile
+```bash
+# deploy all at once
+helmfile  \
+--environment learning \
+--file helmfile.yaml \
+sync
+
+# deploy only micro-backend at the time
+helmfile  \
+--selector key=micro-backend \
+--environment learning \
+--file helmfile.yaml \
+sync
+
+# deploy only micro-frontend at the time
+helmfile  \
+--selector key=micro-frontend \
+--environment learning \
+--file helmfile.yaml \
+sync
+
+# deploy only nginx-ingress at the time
+helmfile  \
+--selector key=nginx-ingress \
+--environment learning \
+--file helmfile.yaml \
+sync
+```
+
+##### Destroy micro-{backend,frontend}, nginx-ingress helm chart via helmfile
+```bash
+# destroy all at once
+helmfile  \
+--environment learning \
+--file helmfile.yaml \
+destroy
+
+# destroy only micro-backend at the time
+helmfile  \
+--selector key=micro-backend \
+--environment learning \
+--file helmfile.yaml \
+destroy
+
+# destroy only micro-frontend at the time
+helmfile  \
+--selector key=micro-frontend \
+--environment learning \
+--file helmfile.yaml \
+destroy
+
+# destroy only nginx-ingress at the time
+helmfile  \
+--selector key=nginx-ingress \
+--environment learning \
+--file helmfile.yaml \
+destroy
+```
+
+
 ## Troubleshooting section <a name="troubleshooting"></a>
 
 There are plenty of situations when one needs to troubleshoot network connections between apps running inside pods and docker containers.

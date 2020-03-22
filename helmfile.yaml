@@ -1,0 +1,70 @@
+repositories:
+# To use official "stable" charts 
+# a.k.a https://github.com/helm/charts/tree/master/stable
+- name: stable
+  url: https://kubernetes-charts.storage.googleapis.com
+
+# This is helm chart repository made of Github 
+# repository taking advantage of Github pages
+- name: hc-v3-repo
+  url: https://xjantoth.github.io/microservice/hc-v3-repo
+
+# This is helm chart repository made of Chartmuseum 
+# which is running as regular deployment within our cluster
+#- name: k8s
+#  url: http://k8s.linuxinuse.com:30444/chartmuseum
+#  username: user
+#  password: Start123#
+
+# Export your environment e.g "learning", "dev", ..., "prod"
+# export HELMFILE_ENVIRONMENT="learning"
+environments:
+  {{ requiredEnv "HELMFILE_ENVIRONMENT" }}:
+    values:
+      - values.yaml
+
+releases:
+  # micro-backend release specification  
+  - name: backend
+    labels:
+      key: micro-backend
+      app: micro-backend
+
+    chart: hc-v3-repo/micro-backend
+    version: 0.1.0
+    set:
+    - name: replicaCount
+      value: 2
+    - name: service.type
+      value: ClusterIP
+    - name: service.nodePort
+      value: " " 
+  
+  # micro-frontend release specification  
+  - name: frontend
+    labels:
+      key: micro-frontend
+      app: micro-frontend
+
+    chart: hc-v3-repo/micro-frontend
+    version: 0.1.0
+    set:
+    - name: replicaCount
+      value: 1
+    - name: service.type
+      value: ClusterIP
+    - name: service.nodePort
+      value: " "
+  
+  # nginx-ingress controller release specification  
+  - name: ingress
+    labels:
+      key: nginx-ingress
+      app: nginx-ingress
+    chart: stable/nginx-ingress 
+    # version: 0.1.0
+    set:
+    - name: controller.service.nodePorts.http
+      value: 30444
+    - name: controller.service.type
+      value: NodePort
