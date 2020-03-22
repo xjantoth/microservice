@@ -27,11 +27,11 @@ releases:
   # (Helm v3) Upgrade your deployment with basic auth
   - name: chartmuseum
     labels:
-      key: chartmuesum
+      key: chartmuseum
       app: chartmuseum
     
     chart: stable/chartmuseum
-    version: 1.2.3
+    version: 2.9.0
     set:
     - name: persistence.pv.enabled
       value: false 

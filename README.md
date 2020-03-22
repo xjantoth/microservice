@@ -846,6 +846,12 @@ helmfile \
 --environment learning \
 --file helmfile.yaml template
 
+# template only chartmuseum via helmfile using  --selector flag
+helmfile \
+--selector key=chartmuseum  \
+--environment learning \
+--file helmfile.yaml template
+
 # template only micro-backend via helmfile using  --selector flag
 helmfile \
 --selector key=micro-backend  \
