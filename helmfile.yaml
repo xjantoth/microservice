@@ -24,6 +24,32 @@ environments:
       - values.yaml
 
 releases:
+  # (Helm v3) Upgrade your deployment with basic auth
+  - name: chartmuseum
+    labels:
+      key: chartmuesum
+      app: chartmuseum
+    
+    chart: stable/chartmuseum
+    version: 1.2.3
+    set:
+    - name: persistence.pv.enabled
+      value: false 
+    - name: env.open.DISABLE_API
+      value: false
+    - name: env.open.CONTEXT_PATH
+      value: "/chartmuseum"
+    - name: ingress.enabled
+      value: true
+    - name: ingress.hosts[0].name
+      value: "k8s.linuxinuse.com"
+    - name: ingress.hosts[0].path
+      value: "/chartmuseum"
+    - name: env.secret.BASIC_AUTH_USER
+      value: "user"
+    - name: env.secret.BASIC_AUTH_PASS
+      value: "Start123#"
+
   # micro-backend release specification  
   - name: backend
     labels:
