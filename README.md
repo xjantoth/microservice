@@ -879,6 +879,12 @@ helmfile  \
 --file helmfile.yaml \
 sync
 
+# deploy chartmuseum via helmfile using  --selector flag
+helmfile \
+--selector key=chartmuseum  \
+--environment learning \
+--file helmfile.yaml sync
+
 # deploy only micro-backend at the time
 helmfile  \
 --selector key=micro-backend \
@@ -908,6 +914,12 @@ helmfile  \
 --environment learning \
 --file helmfile.yaml \
 destroy
+
+# destroy chartmuseum via helmfile using  --selector flag
+helmfile \
+--selector key=chartmuseum  \
+--environment learning \
+--file helmfile.yaml destroy
 
 # destroy only micro-backend at the time
 helmfile  \
