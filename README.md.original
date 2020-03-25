@@ -1,46 +1,31 @@
 # Table of contents
-- [Run PostgreSQL database locally as docker container](#run-postgresql-database-locally-as-docker-container)
-- [Getting started with a helm chart deployment](#getting-started-with-a-helm-chart-deployment)
-- [Backend - Python Flask](#backend-python-flask)
-  - [Overview of backend env. variables](#overview-of-backend-env-variables)
-  - [Run backend locally](#run-backend-locally)
-  - [Run backend as docker container locally](#run-backend-as-docker-container-locally)
-  - [Install helm v3](#install-helm-v3)
-  - [Backend helm chart deployment](#backend-helm-chart-deployment)
-  - [Get inside busybox and call your flask instance](#get-inside-busybox-and-call-your-flask-instance)
-  - [Get inside python instance POD and call your flask instance](#get-inside-python-instance-pod-and-call-your-flask-instance)
-  - [Scale up-down your back-end app deployment](#scale-up-down-your-back-end-app-deployment)
-  - [Render templates files](#render-templates-files)
-- [Frontend - React app](#frontend-react-app)
-  - [Run frontend locally](#run-frontend-locally)
-  - [Run frontend as docker container locally](#run-frontend-as-docker-container-locally)
-  - [Frontend helm chart deployment](#frontend-helm-chart-deployment)
-  - [Scale up-down your front-end app deployment](#scale-up-down-your-front-end-app-deployment)
-  - [Nginx Controller Proxy](#nginx-controller-proxy)
-- [Github helm chart repository](#github-helm-chart-repository)
-  - [Create (helm v2) helm chart repository at your Github repository](#create-helm-v2-helm-chart-repository-at-your-github-repository)
-  - [Create (helm v3) helm chart repository at your Github repository](#create-helm-v3-helm-chart-repository-at-your-github-repository)
-  - [Add one more dummy helm chart](#add-one-more-dummy-helm-chart)
-  - [Deploy (Helm v2) micro-backend and micro-frontend helm chart from Github](#deploy-helm-v2-micro-backend-and-micro-frontend-helm-chart-from-github)
-  - [Deploy (Helm v3) micro-backend and micro-frontend helm chart from Github](#deploy-helm-v3-micro-backend-and-micro-frontend-helm-chart-from-github)
-- [Chartmuseum helm chart repository](#chartmuseum-helm-chart-repository)
-  - [Create helm chart repository based on Chartmuseum helm chart (Helm v2 and v3)](#create-helm-chart-repository-based-on-chartmuseum-helm-chart-helm-v2-and-v3)
-  - [(Helm v2) Deploy micro-backend and micro-frontend helm charts from Chartmuseum](#helm-v2-deploy-micro-backend-and-micro-frontend-helm-charts-from-chartmuseum)
-  - [(Helm v3) Deploy micro-backend and micro-frontend helm charts from Chartmuseum](#helm-v3-deploy-micro-backend-and-micro-frontend-helm-charts-from-chartmuseum)
-- [Helmfile](#helmfile)
-  - [Take advantage of helmfile binary](#take-advantage-of-helmfile-binary)
-  - [Create symbolic link from helm3 to helm](#create-symbolic-link-from-helm3-to-helm)
-  - [Explore helmfile template command](#explore-helmfile-template-command)
-  - [Deploy micro-backend micro-frontend nginx-ingress helm chart via helmfile](#deploy-micro-backend-micro-frontend-nginx-ingress-helm-chart-via-helmfile)
-  - [Destroy micro-backend micro-frontend nginx-ingress helm chart via helmfile](#destroy-micro-backend-micro-frontend-nginx-ingress-helm-chart-via-helmfile)
-- [Troubleshooting section](#troubleshooting-section)
-- [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
-- [Create TOC](#create-toc)
-- [Useful links](#useful-links)
+- [Table of contents](#table-of-contents)
+  - [Run PostgreSQL database locally as docker container <a name="database"></a>](#run-postgresql-database-locally-as-docker-container-a-name%22database%22a)
+  - [Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>](#getting-started-with-a-helm-chart-deployment-a-name%22dummy-helm-chart-deployment%22a)
+  - [Backend - Python Flask <a name="backend"></a>](#backend---python-flask-a-name%22backend%22a)
+      - [Overview of backend env. variables <a name="env-variables"></a>](#overview-of-backend-env-variables-a-name%22env-variables%22a)
+      - [Run backend locally <a name="run-backend-locally"></a>](#run-backend-locally-a-name%22run-backend-locally%22a)
+      - [Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>](#run-backend-as-docker-container-locally-a-name%22run-backend-as-docker-container-locally%22a)
+      - [Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>](#backend-helm-chart-deployment-a-name%22backend-helm-chart-deployment%22a)
+      - [Get inside busybox and call your flask instance](#get-inside-busybox-and-call-your-flask-instance)
+      - [Get inside python instance POD and call your flask instance](#get-inside-python-instance-pod-and-call-your-flask-instance)
+      - [Scale up/down your back-end app deployment](#scale-updown-your-back-end-app-deployment)
+      - [Render templates files](#render-templates-files)
+  - [Frontend - React app <a name="frontend"></a>](#frontend---react-app-a-name%22frontend%22a)
+      - [Run frontend locally <a name="run-frontend-locally"></a>](#run-frontend-locally-a-name%22run-frontend-locally%22a)
+      - [Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>](#run-frontend-as-docker-container-locally-a-name%22run-frontend-as-docker-container-locally%22a)
+      - [Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>](#frontend-helm-chart-deployment-a-name%22frontend-helm-chart-deployment%22a)
+      - [Scale up/down your front-end app deployment](#scale-updown-your-front-end-app-deployment)
+  - [Nginx Controller Proxy <a name="nginx-controller-proxy"></a>](#nginx-controller-proxy-a-name%22nginx-controller-proxy%22a)
+  - [Create helm chart repository at your Github repository](#create-helm-chart-repository-at-your-github-repository)
+  - [Deploy micro-backend and micro-frontend helm chart from Github](#deploy-micro-backend-and-micro-frontend-helm-chart-from-github)
+  - [Create helm chart repository based on Chartmuseum helm chart](#create-helm-chart-repository-based-on-chartmuseum-helm-chart)
+  - [Deploy micro-backend and micro-frontend helm chart from Chartmuseum](#deploy-micro-backend-and-micro-frontend-helm-chart-from-chartmuseum)
+  - [Troubleshooting section <a name="troubleshooting"></a>](#troubleshooting-section-a-name%22troubleshooting%22a)
+    - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 
 
-
-## Run PostgreSQL database locally as docker container
+## Run PostgreSQL database locally as docker container <a name="database"></a>
 
 ```bash
 # Clean all docker images/processes/... if neceassary
@@ -64,7 +49,7 @@ psql --host=localhost --port=5432 -U micro -d microservice
 select * from request_ips;
 ```
 
-## Getting started with a helm chart deployment
+## Getting started with a helm chart deployment <a name="dummy-helm-chart-deployment"></a>
 
 If there is someone who does not know anything about <br>
 helm charts there is a simple deployment available <br>
@@ -92,9 +77,9 @@ stable/dokuwiki \
 ```
 
 
-## Backend - Python Flask
+## Backend - Python Flask <a name="backend"></a>
 
-#### Overview of backend env. variables
+#### Overview of backend env. variables <a name="env-variables"></a>
 
 Following environmental variables are used inside docker image.
 
@@ -106,7 +91,7 @@ PSQL_DB_ADDRESS     default='127.0.0.1'
 PSQL_DB_PORT        default='5432'
 ```
 
-#### Run backend locally
+#### Run backend locally <a name="run-backend-locally"></a>
 
 ```bash
 # Create python virtualenv
@@ -124,7 +109,7 @@ export FLASK_APP=app
 flask run
 ```
 
-#### Run backend as docker container locally
+#### Run backend as docker container locally <a name="run-backend-as-docker-container-locally"></a>
 
 ```bash
 # Stop and remove docker container process if previously started
@@ -173,7 +158,7 @@ helm3 repo list
 ```
 
 
-#### Backend helm chart deployment
+#### Backend helm chart deployment <a name="backend-helm-chart-deployment"></a>
 
 Backend (Python Flask) helm chart (micro-backend) is dependent on a database PostgreSQL.<br>
 There are two options how one can include database (postgresql) as dependency for this helm chart:<br>
@@ -295,7 +280,7 @@ wget -O - http://127.0.0.1:8000/api/getallips
 ```
 
 
-#### Scale up-down your back-end app deployment
+#### Scale up/down your back-end app deployment
 
 ```bash
 # Describe micro-backend svc
@@ -339,9 +324,9 @@ helm3 template -x templates/ingress.yaml helm-charts/micro-backend
 helm3 template -x templates/deployment.yaml helm-charts/micro-backend
 ```
 
-## Frontend - React app
+## Frontend - React app <a name="frontend"></a>
 
-#### Run frontend locally
+#### Run frontend locally <a name="run-frontend-locally"></a>
 
 Please execute following lines when running React frontend app<br>
 locally (e.g. at your laptop)
@@ -354,7 +339,7 @@ npm start
 npm run build
 ```
 
-#### Run frontend as docker container locally
+#### Run frontend as docker container locally <a name="run-frontend-as-docker-container-locally"></a>
 
 ```bash
 cd frontend
@@ -372,7 +357,7 @@ docker login
 docker push <account>/frontend:v0.0.3
 ```
 
-#### Frontend helm chart deployment
+#### Frontend helm chart deployment <a name="frontend-helm-chart-deployment"></a>
 
 If want to quickly expose frontend app as service type NodePort<br>
 to be able to access it immediately - please use following command:
@@ -428,7 +413,7 @@ Verify your frontend deployment via:
 curl http://<ip_address>:30333/app/
 ```
 
-#### Scale up-down your front-end app deployment
+#### Scale up/down your front-end app deployment
 
 ```bash
 # Describe micro-frontend svc
@@ -458,7 +443,7 @@ helm-charts/micro-frontend
 
 ![](images/react-frontend.png)
 
-## Nginx Controller Proxy
+## Nginx Controller Proxy <a name="nginx-controller-proxy"></a>
 
 You must have an ingress controller to satisfy an Ingress. Only creating an Ingress resource has no effect. <br>
 If want to avoid exposing **NodePort** service <br>
@@ -555,7 +540,6 @@ helm delete --purge ingress --tls
 helm3 delete ingress 
 ```
 
-# Github helm chart repository
 ## Create (helm v2) helm chart repository at your Github repository
 
 ```bash
@@ -674,8 +658,8 @@ ingress 	default  	1       	2020-03-17 21:41:23.573504347 +0000 UTC	deployed	ngi
 
 helm3 delete <deployment-name>
 ```
-# Chartmuseum helm chart repository
-## Create helm chart repository based on Chartmuseum helm chart (Helm v2 and v3)
+
+## Create helm chart repository based on Chartmuseum helm chart (Helm v2 & v3)
 
 ```bash
 # (Helm v2) 
@@ -782,7 +766,7 @@ helm3 delete chartmuseum
 
 ```
 
-## (Helm v2) Deploy micro-backend and micro-frontend helm charts from Chartmuseum
+## (Helm v2) Deploy micro-backend and micro-frontend helm charts from Chartmuseum 
 
 ```bash
 # nginx-ingress deployment helm v2
@@ -840,7 +824,6 @@ helm3 upgrade backend \
 k8s/micro-backend
 ```
 
-# Helmfile
 ## Take advantage of helmfile binary
 
 ```bash
@@ -851,7 +834,7 @@ chmod +x /usr/bin/helmfile
 install_helmfile
 ```
 
-##### Create symbolic link from helm3 to helm
+#####  Create symbolic link from helm3 -> helm
 ```bash
 ln -s /usr/bin/helm3 /usr/bin/helm
 ```
@@ -888,7 +871,7 @@ helmfile \
 --file helmfile.yaml template
 ```
 
-##### Deploy micro-backend micro-frontend nginx-ingress helm chart via helmfile
+##### Deploy micro-{backend,frontend}, nginx-ingress helm chart via helmfile
 ```bash
 # deploy all at once
 helmfile  \
@@ -924,7 +907,7 @@ helmfile  \
 sync
 ```
 
-##### Destroy micro-backend micro-frontend nginx-ingress helm chart via helmfile
+##### Destroy micro-{backend,frontend}, nginx-ingress helm chart via helmfile
 ```bash
 # destroy all at once
 helmfile  \
@@ -961,7 +944,7 @@ destroy
 ```
 
 
-## Troubleshooting section
+## Troubleshooting section <a name="troubleshooting"></a>
 
 There are plenty of situations when one needs to troubleshoot network connections between apps running inside pods and docker containers.
 
@@ -1001,13 +984,8 @@ available.
 
 ```bash
 find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {} +
+
 ```
 
-### Create TOC
-
-```bash
-cat README.md| sed -E  's/^[#]{2,} (.*)/- [\1](#\L\1)/; :a s/(\(#[^ ]+) /\1-/g; ta' | grep -e  "-\s\[.*"
-```
-
-## Useful links
+## USeeful links
 https://forum.kde.org/viewtopic.php?f=270&t=154151
