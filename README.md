@@ -32,6 +32,7 @@
   - [Create symbolic link from helm3 to helm](#create-symbolic-link-from-helm3-to-helm)
   - [Explore helmfile template command](#explore-helmfile-template-command)
   - [Deploy micro-backend micro-frontend nginx-ingress helm chart via helmfile](#deploy-micro-backend-micro-frontend-nginx-ingress-helm-chart-via-helmfile)
+  - [Deploy micro-frontend and micro-backend from Chartmuseum via helmfile](#Deploy-micro-frontend-and-micro-backend-from-chartmuseum-via-helmfile)
   - [Destroy micro-backend micro-frontend nginx-ingress helm chart via helmfile](#destroy-micro-backend-micro-frontend-nginx-ingress-helm-chart-via-helmfile)
 - [Troubleshooting section](#troubleshooting-section)
 - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
@@ -922,6 +923,34 @@ helmfile  \
 --environment learning \
 --file helmfile.yaml \
 sync
+```
+
+#### Deploy micro-frontend and micro-backend from Chartmuseum via helmfile
+
+```bash
+# (Helm v3) Package your helm charts
+helm3 package helm-charts/micro-backend
+helm3 package helm-charts/micro-frontend
+
+# (Helm v3) Push helm chart to Chartmuseum with authentication
+curl -u user --data-binary "@micro-backend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+
+curl -u user --data-binary "@micro-frontend-0.1.0.tgz" http://k8s.linuxinuse.com:30444/chartmuseum/api/charts
+
+helm3 repo add k8s http://k8s.linuxinuse.com:30444/chartmuseum --username user --password Start123#
+helm3 repo update
+helm3 search repo k8s/ 
+helm3 repo remove k8s
+
+# deploy only micro-backend, micro-frontend at the same time
+export HELMFILE_ENVIRONMENT="learning"
+helmfile  \
+--selector key=micro-backend \
+--selector key=micro-frontend \
+--environment learning \
+--file helm-charts/helmfile.yaml \
+sync
+
 ```
 
 ##### Destroy micro-backend micro-frontend nginx-ingress helm chart via helmfile
