@@ -951,6 +951,15 @@ helmfile  \
 --file helm-charts/helmfile.yaml \
 sync
 
+# Comand used in lecture
+export HELMFILE_ENVIRONMENT="learning"
+helmfile  \
+--selector key=micro-backend \
+--selector key=micro-frontend \
+--environment learning \
+--file helmfile-deploy-from-chartmuseum.yaml \
+sync
+
 ```
 
 ##### Destroy micro-backend micro-frontend nginx-ingress helm chart via helmfile
