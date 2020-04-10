@@ -335,9 +335,9 @@ helm template -x templates/deployment.yaml helm-charts/micro-backend
 # If want to see how supplied values will be rendered before deployment
 # with helm v3
 /opt/microservice
-helm3 template -x templates/service.yaml helm-charts/micro-backend
-helm3 template -x templates/ingress.yaml helm-charts/micro-backend 
-helm3 template -x templates/deployment.yaml helm-charts/micro-backend
+helm3 template --show-only templates/service.yaml helm-charts/micro-backend
+helm3 template --show-only templates/ingress.yaml helm-charts/micro-backend 
+helm3 template --show-only templates/deployment.yaml helm-charts/micro-backend
 ```
 
 ## Frontend - React app
