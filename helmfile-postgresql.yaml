@@ -1,0 +1,53 @@
+repositories:
+- name: bitnami
+  url:  https://charts.bitnami.com/bitnami
+
+
+releases:
+  # (Helm v3) Upgrade your deployment with basic auth
+  - name: postgresql
+    labels:
+      key: db
+      app: postgresql
+    
+    chart: bitnami/postgresql
+    version: 8.9.2
+    set:
+    - name: global.postgresql.postgresqlUsername
+      value: {{ requiredEnv "HC_MASTER_DB_USER" }}
+    - name: global.postgresql.postgresqlPassword
+      value: {{ requiredEnv "HC_MASTER_DB_PASS" }}
+    - name: persistence.enabled
+      value: true
+    - name: persistence.size
+      value: 1Gi
+    values:
+      - pgHbaConfiguration: |
+          local all all trust
+          host all all localhost trust
+          host microservice  micro {{ requiredEnv "HC_ALLOWED_IPS" }} password
+      - initdbScripts:
+          db-init.sql: |
+            CREATE DATABASE {{ requiredEnv "HC_DB" }};
+            CREATE USER {{ requiredEnv "HC_DB_USER" }} WITH ENCRYPTED PASSWORD '{{ requiredEnv "HC_DB_PASS" }}';
+            GRANT ALL PRIVILEGES ON DATABASE {{ requiredEnv "HC_DB" }} TO {{ requiredEnv "HC_DB_USER" }};
+            ALTER DATABASE {{ requiredEnv "HC_DB" }} OWNER TO {{ requiredEnv "HC_DB_USER" }};
+
+# export HC_ALLOWED_IPS="172.31.0.0/16"
+# export HC_DB="microservice"
+# export HC_DB_USER="micro"
+# export HC_DB_PASS="password"
+# export HC_MASTER_DB_PASS="password"
+# export HC_MASTER_DB_USER="postgres"
+
+# kubectl run postgresql-client \
+# --rm --tty -i --restart='Never' \ 
+# --namespace default \
+# --image docker.io/bitnami/postgresql:11.7.0-debian-10-r82 \
+# --env="PGPASSWORD=password" \
+# --command -- psql --host postgresql -U micro -d microservice -p 5432
+
+
+
+
+

@@ -34,6 +34,7 @@
   - [Deploy micro-backend micro-frontend nginx-ingress helm chart via helmfile](#deploy-micro-backend-micro-frontend-nginx-ingress-helm-chart-via-helmfile)
   - [Deploy micro-frontend and micro-backend from Chartmuseum via helmfile](#Deploy-micro-frontend-and-micro-backend-from-chartmuseum-via-helmfile)
   - [Destroy micro-backend micro-frontend nginx-ingress helm chart via helmfile](#destroy-micro-backend-micro-frontend-nginx-ingress-helm-chart-via-helmfile)
+  - [PostgreSQL at AWS with Persistent Volume in AWS](#postgresql-at-aws-with-persistent-volume-in-aws)
 - [Troubleshooting section](#troubleshooting-section)
 - [If helm chart has to be renamed from foo to bar](#if-helm-chart-has-to-be-renamed-from-foo-to-bar)
 - [Create TOC](#create-toc)
@@ -998,7 +999,79 @@ helmfile  \
 destroy
 ```
 
+<!-- - [PostgreSQL at AWS with Persistent Volume in AWS](#postgresql-at-aws-with-persistent-volume-in-aws)-->
+## PostgreSQL at AWS with Persistent Volume in AWS
 
+Template PostgreSQL deployment
+```bash
+export HC_ALLOWED_IPS="172.31.0.0/16"
+export HC_DB="microservice"
+export HC_DB_USER="micro"
+export HC_DB_PASS="password"
+export HC_MASTER_DB_PASS="password"
+export HC_MASTER_DB_USER="postgres"
+
+helmfile -f helmfile-postgresql.yaml template
+```
+Execute PostgreSQL deployment
+```bash
+export HC_ALLOWED_IPS="172.31.0.0/16"
+export HC_DB="microservice"
+export HC_DB_USER="micro"
+export HC_DB_PASS="password"
+export HC_MASTER_DB_PASS="password"
+export HC_MASTER_DB_USER="postgres"
+
+helmfile -f helmfile-postgresql.yaml sync
+```
+
+
+Example 
+```bash
+cat helmfile-postgresql.yaml
+repositories:
+- name: bitnami
+  url:  https://charts.bitnami.com/bitnami
+
+
+releases:
+  # (Helm v3) Upgrade your deployment with basic auth
+  - name: postgresql
+    labels:
+      key: db
+      app: postgresql
+    
+    chart: bitnami/postgresql
+    version: 8.9.2
+    set:
+    - name: global.postgresql.postgresqlUsername
+      value: {{ requiredEnv "HC_MASTER_DB_USER" }}
+    - name: global.postgresql.postgresqlPassword
+      value: {{ requiredEnv "HC_MASTER_DB_PASS" }}
+    - name: persistence.enabled
+      value: true
+    - name: persistence.size
+      value: 1Gi
+    values:
+      - pgHbaConfiguration: |
+          local all all trust
+          host all all localhost trust
+          host microservice  micro {{ requiredEnv "HC_ALLOWED_IPS" }} password
+      - initdbScripts:
+          db-init.sql: |
+            CREATE DATABASE {{ requiredEnv "HC_DB" }};
+            CREATE USER {{ requiredEnv "HC_DB_USER" }} WITH ENCRYPTED PASSWORD '{{ requiredEnv "HC_DB_PASS" }}';
+            GRANT ALL PRIVILEGES ON DATABASE {{ requiredEnv "HC_DB" }} TO {{ requiredEnv "HC_DB_USER" }};
+            ALTER DATABASE {{ requiredEnv "HC_DB" }} OWNER TO {{ requiredEnv "HC_DB_USER" }};
+
+# export HC_ALLOWED_IPS="172.31.0.0/16"
+# export HC_DB="microservice"
+# export HC_DB_USER="micro"
+# export HC_DB_PASS="password"
+# export HC_MASTER_DB_PASS="password"
+# export HC_MASTER_DB_USER="postgres"
+
+```
 ## Troubleshooting section
 
 There are plenty of situations when one needs to troubleshoot network connections between apps running inside pods and docker containers.
@@ -1044,7 +1117,7 @@ find . -type f -not -path '*/\.*' -exec sed -i 's/micro-chart/micro-backend/g' {
 ### Create TOC
 
 ```bash
-cat README.md| sed -E  's/^[#]{2,} (.*)/- [\1](#\L\1)/; :a s/(\(#[^ ]+) /\1-/g; ta' | grep -e  "-\s\[.*"
+cat README.md| sed -E  's/^[#]{2,} (.*)/- [\1](#\L\1)/;-:a-s/(\(#[^-]+)-/\1-/g;-ta'-|-grep--e--"-\s\[.*"
 ```
 
 ## Useful links
