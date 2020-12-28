@@ -6,7 +6,7 @@ entries:
     created: "2020-03-17T21:51:31.020419707+01:00"
     dependencies:
     - name: postgresql
-      repository: https://kubernetes-charts.storage.googleapis.com
+      repository: https://charts.helm.sh/stable
       version: 3.18.3
     description: Backend Python Flask app
     digest: af7ea5c0c94a52030bf65cdbb10a185038a46e29e75c03ae9eaa08fb6d8e9482

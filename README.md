@@ -168,7 +168,7 @@ install_helm3
 
 # In case you have no helm chart repository added
 helm3 repo \
-add stable https://kubernetes-charts.storage.googleapis.com/
+add stable https://charts.helm.sh/stable/
 
 # Verify your helm chart repository repo helm v3
 helm3 repo list
@@ -188,7 +188,7 @@ backend helm chart.
 cat <<EOF > requirements.yaml
 dependencies:
 - name: postgresql
-  repository: https://kubernetes-charts.storage.googleapis.com
+  repository: https://charts.helm.sh/stable
   version: 3.18.3
 EOF
 
@@ -505,7 +505,7 @@ stable/nginx-ingress \
 
 # In case you have no helm chart repository added
 helm3 repo \
-add stable https://kubernetes-charts.storage.googleapis.com/
+add stable https://charts.helm.sh/stable/
 
 # Verify your helm chart repository repo helm v3
 helm3 repo list
@@ -643,7 +643,7 @@ helm3 repo add hc-v3-repo https://xjantoth.github.io/microservice/hc-v3-repo
 
 # In case you have no helm chart repository added
 helm3 repo \
-add stable https://kubernetes-charts.storage.googleapis.com/
+add stable https://charts.helm.sh/stable/
 helm3 repo update
 
 helm3 install \

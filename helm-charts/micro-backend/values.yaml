@@ -80,7 +80,7 @@ postgresql:
   pgHbaConfiguration: |
     local all all trust
     host all all localhost trust
-    host microservice  micro 192.168.0.0/24 password
+    host microservice  micro 10.42.0.0/24 password
 
   initdbScripts:
     db-init.sql: |
