@@ -503,6 +503,12 @@ helm install \
 stable/nginx-ingress \
 --tls
 
+# nginx-ingress deployment helm v3
+helm install ingress \
+--set controller.service.type=NodePort \
+--set controller.service.httpPort.nodePort=30444 \
+nginx-stable/nginx-ingress
+
 # In case you have no helm chart repository added
 helm3 repo \
 add stable https://charts.helm.sh/stable/
